@@ -16,6 +16,10 @@ class StravaConsistancyAward:
         utc = UTC()
         self.now = datetime.now(utc)
 
+    # Defines the logic that controls if this award is run
+    def awardLogic(self):
+        pass
+
     # Return the starting range of the award
     # This should be the date of the start of the previous week or the previous month, 
     # The start of the week is monday

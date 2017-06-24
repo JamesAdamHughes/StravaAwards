@@ -3,11 +3,7 @@ from stravalib.client import Client
 from StravaConsistancyAward import StravaConsistancyAward, UTC
 from pprint import pprint
 import arrow
-
-def getStravaClient():
-    client = Client()
-    client.access_token = 'eb7344dda517a55ca287f41e498005e13159cdc0'
-    return client
+import ActivityManager
 
 
 def createAwards():
@@ -20,12 +16,6 @@ def createAwards():
 
     return awards
 
-
-def getAllActivites(stravaClient):
-    a = []
-    for activity in stravaClient.get_activities(after = '2017-05-1',  limit=200):
-        a.append(activity)
-    return a
 
 # Function takes an award type, applies it to the activites data
 # returns true if the award occured
@@ -64,7 +54,11 @@ print 'Starting Strava Awards'
 # create clients
 smtpserver = getEmailServer()
 stravaAwards = createAwards()
-stravaActivites = getAllActivites(getStravaClient())
+
+# Get and save activitys to database
+stravaActivites = ActivityManager.getActvitesFromAPI(ActivityManager.getStravaClient())
+for activity in stravaActivites:
+    ActivityManager.storeActivity(activity)
 
 # Go through awards and award them
 for award in stravaAwards:
