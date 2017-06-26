@@ -18,22 +18,40 @@ class StravaConsistancyAward:
 
     # Defines the logic that controls if this award is run
     def awardLogic(self):
-        pass
+
+        sql = """
+        select count(*) from (
+            select strftime('%W', start_date) weekNo, count(*)
+            from tb_activity
+                where 1=1
+                    and start_date > '{0}'
+                    and start_date < '{1}'
+                    and type = {2}
+            group by weekNo
+            having count(*) > 0
+        );
+        """.format(self.getStartDate(), self.getEndDate(), self.exerciseType)
+
+        return sql;
 
     # Return the starting range of the award
     # This should be the date of the start of the previous week or the previous month, 
     # The start of the week is monday
     def getStartDate(self):
+        date = None
+
         if (self.epochDays != 0):
-            return self.now - timedelta(days=self.epochDays)
+            date = self.now - timedelta(days=self.epochDays)
         elif (self.epochWeeks != 0):
-            return self.now - timedelta(days=self.now.weekday(), weeks=(1 * (self.epochWeeks-1)))
+            date = self.now - timedelta(days=self.now.weekday(), weeks=(1 * (self.epochWeeks-1)))
         else:
-            return self.now - timedelta(days=self.now.weekday(), weeks=self.epochMonths*4)
+            date = self.now - timedelta(days=self.now.weekday(), weeks=self.epochMonths*4)
+
+        return date.format()
 
     # Can't win awards for exercises done after "now"
     def getEndDate(self):
-        return self.now
+        return self.now.format()
 
     def getAwardType(self):
         exerciseTypes = {

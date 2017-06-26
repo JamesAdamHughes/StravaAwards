@@ -4,6 +4,7 @@ from StravaConsistancyAward import StravaConsistancyAward, UTC
 from pprint import pprint
 import arrow
 import ActivityManager
+import AwardManager
 
 
 def createAwards():
@@ -19,53 +20,39 @@ def createAwards():
 
 # Function takes an award type, applies it to the activites data
 # returns true if the award occured
-def testAwardOccured(award, activites):
+def testAwardOccured(award):
     print "Checking " + award.name
 
     # Force set date for testing
-    award.setNow(2017, 05, 30)
+    award.setNow(2017, 06, 30)
 
     print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate());
     print arrow.get(award.getStartDate()).humanize()
 
-    print "Valid Activites are..."
-    validActivities = []
-    for activity in activites:
+    return AwardManager.checkAwardOccured(award)
 
-        activityStartDate = arrow.get(activity.start_date)
-
-        # Activity happened between now and now-eligiabletime
-        if(activityStartDate > award.getStartDate() and activityStartDate < award.getEndDate()):
-            if activity.type == award.getAwardType():
-                print '\t' + activity.name
-                validActivities.append(activity)
-
-    print "valid activites : " + str(len(validActivities))
-
-    if len(validActivities) == award.requiredActivites:
-        print award.getAwardText()        
-        return True
-    else:
-        return False
+# Get and save activitys to database
+def getAndStoreActivites():
+    stravaActivites = ActivityManager.getActvitesFromAPI(ActivityManager.getStravaClient())
+    for activity in stravaActivites:
+        ActivityManager.storeActivity(activity)
 
 
 print 'Starting Strava Awards'
 
 # create clients
-smtpserver = getEmailServer()
+# smtpserver = getEmailServer()
 stravaAwards = createAwards()
 
-# Get and save activitys to database
-stravaActivites = ActivityManager.getActvitesFromAPI(ActivityManager.getStravaClient())
-for activity in stravaActivites:
-    ActivityManager.storeActivity(activity)
+getAndStoreActivites()
 
 # Go through awards and award them
 for award in stravaAwards:
-    occured = testAwardOccured(award, stravaActivites)
+    occured = testAwardOccured(award)
     if occured:
+        print award.getAwardText()    
         print 'Sending Email...'
-        sendEmail(smtpserver, award.name, award.getAwardText())
+        # sendEmail(smtpserver, award.name, award.getAwardText())
     print '\n'
 
 

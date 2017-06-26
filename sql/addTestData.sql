@@ -1,6 +1,6 @@
 delete from tb_activity;
 
-insert into tb_activity (
+insert OR IGNORE into tb_activity (
     fk_strava_activity_id,
     start_date,
     name,

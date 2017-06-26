@@ -17,6 +17,51 @@ def getActvitesFromAPI(client, afterDate = '2017-05-1'):
         a.append(activity)
     return a
 
+def fetchAllDb(sql, params=None):
+    conn = sqlite3.connect(DBNAME)
+    c = conn.cursor()
+
+    if params:
+        c.execute(sql, params)
+    else :
+        c.execute(sql)
+
+    # Get column names
+    names = [description[0] for description in c.description]
+    
+    # Get results from the db
+    # Map each column in the row, to the associated column name
+    results = []
+    for row in c.fetchall():
+        results.append(dict(zip(names, row)))
+   
+    conn.commit()
+    conn.close()
+
+    return results
+
+def insertDb(sql, params):
+    conn = sqlite3.connect(DBNAME)
+    c = conn.cursor()
+
+    if params:
+        c.execute(sql, params)
+    else :
+        c.execute(sql)
+   
+    conn.commit()
+    conn.close()
+
+    return
+
+def getAllStoredActivities(afterDate = '2016-0-01'):
+    sql = """
+    select * 
+    from tb_activity;
+    """
+
+    return fetchAllDb(sql)
+
 def getActivityType(activity):
     exerciseTypes = {
            'Run': 0,
@@ -24,30 +69,24 @@ def getActivityType(activity):
         }
     return exerciseTypes[activity.type]
 
-def storeActivity(activity):
-    conn = sqlite3.connect(DBNAME)
-    c = conn.cursor()
-    
+def storeActivity(activity):  
     # Save startdate as iso format for consistancy
     startDate = arrow.get(activity.start_date)
 
     sql = """
-        insert into tb_activity (
+        insert or ignore into tb_activity (
             fk_strava_activity_id,
             start_date,
             name,
             type
         ) values (
-            {0},
-            '{1}',
-            '{2}',
-            {3}
+            ?,
+            ?,
+            ?,
+            ?
         );
-    """.format(activity.id, startDate, activity.name, getActivityType(activity))
+    """
 
-    c.execute(sql)
-    
-    conn.commit()
-    conn.close()
+    return insertDb(sql, (activity.id, startDate.format(), activity.name, getActivityType(activity)))
 
-    return 
+     
