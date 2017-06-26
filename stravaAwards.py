@@ -1,6 +1,6 @@
 from emailUtilities import sendEmail, getEmailServer
 from stravalib.client import Client
-from StravaConsistancyAward import StravaConsistancyAward, UTC
+from StravaConsistancyAward import StravaConsistancyAward
 from pprint import pprint
 import arrow
 import ActivityManager

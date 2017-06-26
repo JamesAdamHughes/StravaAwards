@@ -4,7 +4,6 @@ import arrow
 
 DBNAME = 'main.db'
 
-
 # Create a strava Client
 def getStravaClient():
     client = Client()

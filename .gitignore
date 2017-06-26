@@ -1,4 +1,5 @@
 emailUtlities.py
+config.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
