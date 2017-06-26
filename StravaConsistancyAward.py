@@ -13,8 +13,7 @@ class StravaConsistancyAward:
         self.exerciseType = eT
         
         # Setup datetime used as "now", using timezone aware date
-        utc = UTC()
-        self.now = datetime.now(utc)
+        self.now = arrow.utcnow()
 
     # Defines the logic that controls if this award is run
     def awardLogic(self):
@@ -69,21 +68,5 @@ class StravaConsistancyAward:
         string = datetime(year, month, day).isoformat(' ')
         self.now = arrow.get(string, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')     
         return   
-
-# A UTC class.
-class UTC(tzinfo):
-    """UTC"""
-
-    def utcoffset(self, dt):
-        ZERO = timedelta(0)
-        return ZERO
-
-    def tzname(self, dt):
-        return "UTC"
-
-    def dst(self, dt):
-        ZERO = timedelta(0)
-        return ZERO
-
 
 
