@@ -1,10 +1,8 @@
-from emailUtilities import sendEmail, getEmailServer
 from stravalib.client import Client
-from StravaConsistancyAward import StravaConsistancyAward
 from pprint import pprint
 import arrow
-import ActivityManager
-import AwardManager
+from service import AwardManager, ActivityManager, emailUtilities, ConfigService
+from service.StravaConsistancyAward import StravaConsistancyAward
 
 
 def createAwards():
@@ -33,27 +31,46 @@ def testAwardOccured(award):
 
 # Get and save activitys to database
 def getAndStoreActivites():
-    stravaActivites = ActivityManager.getActvitesFromAPI(ActivityManager.getStravaClient())
+    print '[main] getting activites'
+    stravaActivites = ActivityManager.getActvitesFromAPI()
+    print '[main] got ' + str(len(stravaActivites)) + ' activities, storing...'
     for activity in stravaActivites:
         ActivityManager.storeActivity(activity)
 
 
-print 'Starting Strava Awards'
 
 # create clients
 # smtpserver = getEmailServer()
-stravaAwards = createAwards()
-
-getAndStoreActivites()
-
-# Go through awards and award them
-for award in stravaAwards:
-    occured = testAwardOccured(award)
-    if occured:
-        print award.getAwardText()    
-        print 'Sending Email...'
-        # sendEmail(smtpserver, award.name, award.getAwardText())
-    print '\n'
+# stravaAwards = createAwards()
 
 
+# # Go through awards and award them
+# for award in stravaAwards:
+#     occured = testAwardOccured(award)
+#     if occured:
+#         print award.getAwardText()    
+#         print 'Sending Email...'
+#         # sendEmail(smtpserver, award.name, award.getAwardText())
+#     print '\n'
 
+
+########
+# Start of main program
+# Check if any old awards to be given
+# Subscribe to webhook events
+########
+def main():
+    print '[main] Starting Strava Awards'
+
+    # Create the list of valid awards that can be given out
+    awards = createAwards()
+
+    # Get list of all activites for a user and store them in a database
+    # This is done on startup to ensure all activites are up to date
+    getAndStoreActivites()
+
+    # Check if any awards need to be given out for recent activites
+
+
+if __name__ == '__main__':
+    main();

@@ -1,24 +1,27 @@
 from stravalib.client import Client
 import sqlite3
 import arrow
+import ConfigService
 
 DBNAME = 'main.db'
 
 # Create a strava Client
 def getStravaClient():
     client = Client()
-    client.access_token = 'eb7344dda517a55ca287f41e498005e13159cdc0'
+    client.access_token = ConfigService.getConfigVar('strava.access_token')
+    print client.access_token
+
     return client
 
-def getActvitesFromAPI(client, afterDate = '2017-05-1'):
+def getActvitesFromAPI(afterDate = '2016-01-1'):
+    client = getStravaClient()
     a = []
     for activity in client.get_activities(after = afterDate,  limit=200):
         a.append(activity)
     return a
 
 def fetchAllDb(sql, params=None):
-    conn = sqlite3.connect(DBNAME)
-    c = conn.cursor()
+    c, conn = getDbCCursor()
 
     if params:
         c.execute(sql, params)
@@ -34,23 +37,28 @@ def fetchAllDb(sql, params=None):
     for row in c.fetchall():
         results.append(dict(zip(names, row)))
    
-    conn.commit()
-    conn.close()
+    closeConnection(conn)
 
     return results
 
-def insertDb(sql, params):
+def getDbCCursor():
     conn = sqlite3.connect(DBNAME)
     c = conn.cursor()
+    return c, conn
+
+def closeConnection(conn):
+    conn.commit()
+    conn.close()
+
+def insertDb(sql, params):
+    c, conn = getDbCCursor()
 
     if params:
         c.execute(sql, params)
     else :
         c.execute(sql)
    
-    conn.commit()
-    conn.close()
-
+    closeConnection(conn)
     return
 
 def getAllStoredActivities(afterDate = '2016-0-01'):
@@ -64,7 +72,11 @@ def getAllStoredActivities(afterDate = '2016-0-01'):
 def getActivityType(activity):
     exerciseTypes = {
            'Run': 0,
-           'Ride': 1             
+           'Ride': 1,
+           'Swim': 2,
+           'EBikeRide' : 3,
+           'Workout' : 4,
+           'WeightTraining' : 5             
         }
     return exerciseTypes[activity.type]
 
