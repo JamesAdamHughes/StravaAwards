@@ -1,13 +1,17 @@
-import Server
-import 
+from stravalib.client import Client
+import ConfigService
+import os
+import json
 
-def subscribe(client):
+def subscribe():
     print 'doing subscription...'
 
     client = Client()
-    callbackUrl = getPublicUrl()
+    callbackUrl = getPublicUrl() + '/strava/callback'
+    client_secret = ConfigService.getConfigVar('strava.client_secret')
+    client_id = ConfigService.getConfigVar('strava.client_id')
 
-    print client.create_subscription(client_id=15341, client_secret='', callback_url=callbackUrl)
+    print client.create_subscription(client_id=client_id, client_secret=client_secret, callback_url=callbackUrl)
 
  
 def getPublicUrl():

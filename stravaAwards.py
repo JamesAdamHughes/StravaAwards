@@ -1,9 +1,9 @@
 from stravalib.client import Client
 from pprint import pprint
 import arrow
-from service import AwardManager, ActivityManager, emailUtilities, ConfigService
+from service import AwardManager, ActivityManager, emailUtilities, ConfigService, SubscriptionManager
 from service.StravaConsistancyAward import StravaConsistancyAward
-
+import subprocess
 
 def createAwards():
     awards = []
@@ -26,6 +26,8 @@ def testAwardOccured(award):
 
     print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate());
     print arrow.get(award.getStartDate()).humanize()
+
+    
 
     return AwardManager.checkAwardOccured(award)
 
@@ -67,10 +69,18 @@ def main():
 
     # Get list of all activites for a user and store them in a database
     # This is done on startup to ensure all activites are up to date
-    getAndStoreActivites()
+    # getAndStoreActivites()
+    SubscriptionManager.subscribe()
+
+
+
 
     # Check if any awards need to be given out for recent activites
 
 
 if __name__ == '__main__':
-    main();
+    # Run additional server
+    # subprocess.call("./server/flask_setup", shell=True)
+
+    # run main logic thread
+    main()
