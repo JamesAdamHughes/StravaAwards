@@ -1,5 +1,6 @@
 import flask
 from flask import jsonify, request
+import json
 
 stravaRoute = flask.Blueprint('simple_page', __name__, template_folder='templates')
 
@@ -28,8 +29,15 @@ def stravaCallback():
         }
 
         return jsonify(res)
-    else if request.method == 'POST':
-        
+    elif request.method == 'POST':
+        data = request.data
+        dataDict = json.loads(data)
+        print dataDict
+        res = {
+            'ok': True
+        }
+
+        return jsonify(res)
 
 @stravaRoute.route('/authorized', methods=['GET', 'POST'])
 def authorized():
