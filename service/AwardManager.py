@@ -5,7 +5,7 @@ from service import emailUtilities
 
 DBNAME = 'main.db'
 
-def check_award_occured(award, user_id):
+def check_award_occured(award, user_id, onlyNew):
     """
     Runs the award logic for an award, to test if it has occured
     Currently only works with SQL statements and consistancy awards
@@ -26,8 +26,10 @@ def check_award_occured(award, user_id):
 
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given
-    previous_awards = get_award_from_db(award, user_id)
-    print previous_awards
+    previous_awards = None
+    if onlyNew:
+        previous_awards = get_award_from_db(award, user_id)
+        print previous_awards
 
     if activites[0] == award.requiredActivites:
         if previous_awards is None:
@@ -123,7 +125,7 @@ def createAwards():
 
     return awards
 
-def get_new_awards_for_user(user_id, now_date="2017-7-9"):
+def get_new_awards_for_user(user_id, now_date="2017-7-9", onlyNew=True):
     """
     Takes an award type, applies it to the activites data
     Returns true if the award occured
@@ -137,7 +139,7 @@ def get_new_awards_for_user(user_id, now_date="2017-7-9"):
         print "[awardM] Checking " + award.name + " from " + arrow.get(award.getStartDate()).humanize()
 
         # Check if the award happened
-        occured = check_award_occured(award, user_id)
+        occured = check_award_occured(award, user_id, onlyNew)
         if occured:
             # save award to db, send email
             valid_awards.append(award)

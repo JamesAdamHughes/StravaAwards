@@ -32,27 +32,35 @@ def activity_load(user_id, from_date="2016-01-01"):
     return jsonify(acts)
 
 @stravaRoute.route('/award/list/<user_id>', methods=['GET'])
-@stravaRoute.route('/award/list/<user_id>/<date>/', methods=['GET'])
-def award_list(user_id, date=None):
+def award_list(user_id):
     """
     Returns a JSON of all awards a user has won on a given date
     Also send an email to the user for each award they have won
     """
     res = {
         "ok": True,
-        "awards" : [],
-        "numberAwards" : 0 
+        "awards" : []
     }
+
+    date = request.args.get('date')
+    onlyNew = request.args.get('onlyNew')
+
     if date is None:
         date = arrow.now().format("YYYY-M-D")
+    
+    if onlyNew is None or onlyNew == 'true':
+        onlyNew = True
+    elif onlyNew == 'false':
+        onlyNew = False
 
-    new_awards = AwardManager.get_new_awards_for_user(user_id, date)
+    new_awards = AwardManager.get_new_awards_for_user(user_id, date, onlyNew)
 
     for award in new_awards:
         emailUtilities.send_email(award.name, award.getAwardText(), test=1)
         res["awards"].append(award.serialize())
 
     res["numberAwards"] = len(res["awards"])
+    res["onlyNew"] = onlyNew
 
     return jsonify(res)
 
