@@ -5,7 +5,6 @@ import arrow
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
         try:
-            print obj
             if isinstance(obj, datetime):
                 return arrow.get(obj).for_json()
             iterable = iter(obj)

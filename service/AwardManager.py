@@ -4,7 +4,7 @@ import arrow
 
 DBNAME = 'main.db'
 
-def check_award_occured(award):
+def check_award_occured(award, user_id):
     """
     Runs the award logic for an award, to test if it has occured
     Currently only works with SQL statements and consistancy awards
@@ -18,20 +18,31 @@ def check_award_occured(award):
     c.execute(award_sql)
 
     # Probably should put this in the award object itself
-    result = c.fetchone()
+    activites = c.fetchone()
 
     conn.commit()
     conn.close()
 
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given
-    if result[0] == award.requiredActivites:
-        return True
+    previousAwards = get_award_from_db(award, user_id)
+    print previousAwards
+
+    if activites[0] == award.requiredActivites:
+        if previousAwards is None:
+            print "awarding user!"
+            return True
+        else:
+            print "found existing award" 
+            print previousAwards 
     else:
-        return False
+        print "not enough activities" 
+        print activites
+    
+    return False
 
 
-def get_award_from_db(start_date, end_date, type):
+def get_award_from_db(award, user_id):
     """
     Returns an award from the database, using the start end and type as a unique identifier
     """
@@ -39,8 +50,23 @@ def get_award_from_db(start_date, end_date, type):
     c = conn.cursor()
 
     sql = """
-    select top 1 * from tb_award where
+    select * 
+    from tb_award
+    where 1=1
+        and datetime_start = ?
+        and datetime_end = ?
+        and type_id = ?
+        and fk_user_id = ?
+        ;
     """
+    c.execute(sql, [award.getStartDate(), award.getEndDate(), award.getAwardType(), user_id])
+    result = c.fetchone()
+
+    print "[awardM] fetched award: " + str(result)
+
+    conn.commit()
+    conn.close()
+    return result
 
 
 def save_award(award, user_id):
@@ -97,7 +123,7 @@ def createAwards():
     return awards
 
 
-def test_award_occured(award, now_date="2017-07-09"):
+def test_award_occured(award, user_id, now_date="2017-07-09"):
     """
     Takes an award type, applies it to the activites data
     Returns true if the award occured
@@ -110,4 +136,4 @@ def test_award_occured(award, now_date="2017-07-09"):
     print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate())
     print arrow.get(award.getStartDate()).humanize()
 
-    return check_award_occured(award)
+    return check_award_occured(award, user_id)

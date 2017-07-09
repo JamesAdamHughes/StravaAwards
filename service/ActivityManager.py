@@ -18,7 +18,6 @@ def get_actvites_from_api(after_date='2016-01-1', limit=200):
     """
     Returns a list of user activites created after the after date
     """
-    print after_date
     client = getStravaClient()
     activites = []
     for activity in client.get_activities(after=after_date, limit=limit):

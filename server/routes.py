@@ -39,7 +39,7 @@ def award_list(user_id, date):
     valid_awards = []
 
     for award in AwardManager.createAwards():
-        occured = AwardManager.test_award_occured(award)
+        occured = AwardManager.test_award_occured(award, user_id)
         if occured:
             # save award to db, send email
             AwardManager.save_award(award, user_id)
