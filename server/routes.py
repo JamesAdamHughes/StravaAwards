@@ -25,8 +25,8 @@ def activity_load(user_id, from_date="2016-01-01"):
     Returns a list of all a users activites from the from date
     These are also saved to the DB if not already saved
     """
-    acts = ActivityManager.get_actvites_from_API(from_date)
-    
+    from_date = str(from_date)
+    acts = ActivityManager.get_and_save_actvites_from_api(from_date)
     acts = [ activity.serialize() for activity in acts]
     return jsonify(acts)
 
@@ -44,7 +44,7 @@ def award_list(user_id, date):
             # save award to db, send email
             AwardManager.save_award(award, user_id)
 
-            valid_awards.append(award.toDict())
+            valid_awards.append(award.serialize())
             print award.getAwardText()
             print 'Sending Email...'
             emailUtilities.send_email(award.name, award.getAwardText(), test=1)

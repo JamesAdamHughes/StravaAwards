@@ -62,17 +62,22 @@ class StravaConsistancyAward:
     def getAwardText(self):
         return 'You won a {0} Award! {1}'.format(self.name, self.message)
 
-    # Manually set the time of "now"
-    # Used for testing different dates. Default is UTC
-    def setNow(self, year, month, day):        
-        string = datetime(year, month, day).isoformat(' ')
-        self.now = arrow.get(string, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')     
+
+    def set_now(self, date):
+        """
+        Manually set the time of "now"
+        Used for testing different dates. Default is UTC
+        """     
+        self.now = arrow.get(date, 'YYYY-M-D').replace(tzinfo='local')     
         return
     
-    def toDict(self):
+    def serialize(self):
         return {
             "name" : self.name,
-            "award_text" : self.getAwardText()
+            "award_text" : self.getAwardText(),
+            "start_date": self.getStartDate(),
+            "end_date" : self.getEndDate(),
+            "required_activites": self.requiredActivites
         }
 
 

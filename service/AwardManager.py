@@ -41,9 +41,10 @@ def save_award(award, user_id):
     """
     Takes an award and saves ti to the db
     """
-    return add_award_to_db(user_id, award.getStartDate(), award.getEndDate(), award.getAwardType())
+    print "[awardM] saving award: " + str(award.name)
+    return add_award_to_db(user_id, award)
 
-def add_award_to_db(user_id, start_date, end_date, type_id):
+def add_award_to_db(user_id, award):
     """
     Inserts an award into tb_award
     """
@@ -53,6 +54,7 @@ def add_award_to_db(user_id, start_date, end_date, type_id):
     sql = """
         insert into tb_award (
             fk_user_id,
+            name,
             datetime_start,
             datetime_end,
             type_id,
@@ -63,15 +65,14 @@ def add_award_to_db(user_id, start_date, end_date, type_id):
             ?,
             ?,
             ?,
+            ?
         );
     """
-    params = (user_id, start_date, end_date, type_id)
+    # params = (user_id, start_date, end_date, type_id)
 
-    if params:
-        c.execute(sql, params)
-    else:
-        c.execute(sql)
-
+    # if params:
+    result = c.execute(sql, [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()])   
+    print result
     return
 
 
@@ -89,7 +90,7 @@ def createAwards():
     return awards
 
 
-def test_award_occured(award):
+def test_award_occured(award, now_date="2017-07-09"):
     """
     Takes an award type, applies it to the activites data
     Returns true if the award occured
@@ -97,7 +98,7 @@ def test_award_occured(award):
     print "Checking " + award.name
 
     # Force set date for testing
-    award.setNow(2017, 06, 30)
+    award.set_now(now_date)
 
     print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate())
     print arrow.get(award.getStartDate()).humanize()
