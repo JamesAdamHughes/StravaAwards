@@ -6,4 +6,12 @@ CREATE TABLE tb_activity (
 	type integer not null
 );
 
+CREATE TABLE tb_award (
+	pk_award_id integer PRIAMRY KEY,
+	fk_user_id integer not null,
+	datetime_start datetimeoffset NOT NULL,
+	datetime_end datetimeoffset NOT NULL,
+	type_id integer not null,
+	datetime_created datetimeoffset NOT NULL
+);
    	

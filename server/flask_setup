@@ -1,5 +1,0 @@
-#!/bin/bash
-export FLASK_DEBUG=0
-export FLASK_APP=server/server.py
-echo "running flask"
-flask run

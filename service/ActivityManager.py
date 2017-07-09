@@ -1,7 +1,8 @@
 from stravalib.client import Client
 import sqlite3
 import arrow
-import ConfigService
+from service import ConfigService
+from service.Activity import Activity
 
 DBNAME = 'main.db'
 
@@ -13,19 +14,23 @@ def getStravaClient():
 
     return client
 
-def getActvitesFromAPI(afterDate = '2016-01-1'):
+def get_actvites_from_API(after_date = '2016-01-1'):
+    """
+    Returns a list of user activites created after the after date
+    """
     client = getStravaClient()
-    a = []
-    for activity in client.get_activities(after = afterDate,  limit=200):
-        a.append(activity)
-    return a
+    activites = []
+    for activity in client.get_activities(after=after_date, limit=10):
+        activites.append(Activity(activity.id, activity.name, activity.start_date, activity.type))
+
+    return activites
 
 def fetchAllDb(sql, params=None):
     c, conn = getDbCCursor()
 
     if params:
         c.execute(sql, params)
-    else :
+    else:
         c.execute(sql)
 
     # Get column names

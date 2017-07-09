@@ -1,7 +1,5 @@
 import smtplib
-
-sender = 'jahughes112@gmail.com'
-receivers = ['jahughes112@gmail.com']
+import ConfigService
 
 emailTemplate = """From: StravaAwards <from@fromdomain.com>
 To: To Person <to@todomain.com>
@@ -15,23 +13,26 @@ Thanks,
 Your StravaAwards Team
 """
 
-def sendEmail(smtpserver, subject='test', body='body', receivers = receivers, sender = sender, test = 0):
-
+def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com'], sender='jahughes112@gmail.com', test=0):
+    """ Send an email """
+    smtpserver = get_email_server()
     email = emailTemplate.format(subject, body)
 
     if test:
         #don't send email during testing
+        print "Email disabled for test"
         return "Email disabled for test"
-        
+
     # Try sending the email
     try:
-       smtpserver.sendmail(sender, receivers, email)
-       print "Successfully sent email"
+        smtpserver.sendmail(sender, receivers, email)
+        print "Successfully sent email"
     except smtplib.SMTPException:
-       print "Error: unable to send email"
+        print "Error: unable to send email"
 
-def getEmailServer():
-    # Connect to GMail SMPT Server
+
+def get_email_server():
+    """Connect to GMail SMPT Server"""
     smtpserver = smtplib.SMTP("smtp.gmail.com", 587)
 
     # login with my credentials
@@ -39,7 +40,8 @@ def getEmailServer():
         smtpserver.ehlo()
         smtpserver.starttls()
         smtpserver.ehlo()
-        smtpserver.login('', '')
+        smtpserver.login(ConfigService.getConfigVar('smpt.username'),
+                         ConfigService.getConfigVar('smpt.password'))
     except smtplib.SMTPAuthenticationError:
         print 'Incorrect Email login Details'
         exit()

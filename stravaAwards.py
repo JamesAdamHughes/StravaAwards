@@ -4,17 +4,14 @@ import arrow
 from service import AwardManager, ActivityManager, emailUtilities, ConfigService, SubscriptionManager
 from service.StravaConsistancyAward import StravaConsistancyAward
 import subprocess
+from flask import Flask, request
+from server.routes import stravaRoute
+from server.CustomJSONEncoder import CustomJSONEncoder
 
-def createAwards():
-    awards = []
-    # todo write this up in json and read from file
-    awards.append(StravaConsistancyAward('TwiceThisWeekAward', 0, 1, 0, 'You ran twice this week!', 2, 0))
-    awards.append(StravaConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 0))
-    awards.append(StravaConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 0))
-    awards.append(StravaConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 0))
-
-    return awards
-
+app = Flask('server')
+app.json_encoder = CustomJSONEncoder
+app.register_blueprint(stravaRoute)
+print '[server] server running at :5000'
 
 # Function takes an award type, applies it to the activites data
 # returns true if the award occured
@@ -24,10 +21,8 @@ def testAwardOccured(award):
     # Force set date for testing
     award.setNow(2017, 06, 30)
 
-    print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate());
+    print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate())
     print arrow.get(award.getStartDate()).humanize()
-
-    
 
     return AwardManager.checkAwardOccured(award)
 
@@ -63,9 +58,9 @@ def getAndStoreActivites():
 ########
 def main():
     print '[main] Starting Strava Awards'
-
+    # server.run()
     # Create the list of valid awards that can be given out
-    awards = createAwards()
+    awards = AwardManager.createAwards()
 
     # Get list of all activites for a user and store them in a database
     # This is done on startup to ensure all activites are up to date
@@ -77,10 +72,13 @@ def main():
 
     # Check if any awards need to be given out for recent activites
 
-
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # Run additional server
     # subprocess.call("./server/flask_setup", shell=True)
 
     # run main logic thread
-    main()
+    # main()
+
+# app.run(host='0.0.0.0', port=5000, debug=False)
+# 
+

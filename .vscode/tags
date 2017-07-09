@@ -1,0 +1,105 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ActivityManager	../stravaAwards.py	/^from service import AwardManager, ActivityManager, emailUtilities, ConfigService, SubscriptionManager$/;"	kind:namespace	line:4
+ActivityManager.py	../service/ActivityManager.py	1;"	kind:file	line:1
+AwardManager	../server/routes.py	/^from service import AwardManager, emailUtilities$/;"	kind:namespace	line:3
+AwardManager	../stravaAwards.py	/^from service import AwardManager, ActivityManager, emailUtilities, ConfigService, SubscriptionManager$/;"	kind:namespace	line:4
+AwardManager.py	../service/AwardManager.py	1;"	kind:file	line:1
+Client	../service/ActivityManager.py	/^from stravalib.client import Client$/;"	kind:namespace	line:1
+Client	../service/SubscriptionManager.py	/^from stravalib.client import Client$/;"	kind:namespace	line:1
+Client	../stravaAwards.py	/^from stravalib.client import Client$/;"	kind:namespace	line:1
+ConfigParser	../service/ConfigService.py	/^import ConfigParser$/;"	kind:namespace	line:1
+ConfigService	../service/ActivityManager.py	/^import ConfigService$/;"	kind:namespace	line:4
+ConfigService	../service/SubscriptionManager.py	/^import ConfigService$/;"	kind:namespace	line:2
+ConfigService	../service/emailUtilities.py	/^import ConfigService$/;"	kind:namespace	line:2
+ConfigService	../stravaAwards.py	/^from service import AwardManager, ActivityManager, emailUtilities, ConfigService, SubscriptionManager$/;"	kind:namespace	line:4
+ConfigService.py	../service/ConfigService.py	1;"	kind:file	line:1
+DBNAME	../service/ActivityManager.py	/^DBNAME = 'main.db'$/;"	kind:variable	line:6
+DBNAME	../service/AwardManager.py	/^DBNAME = 'main.db'$/;"	kind:variable	line:5
+Flask	../server.py	/^from flask import Flask, request$/;"	kind:namespace	line:1
+Flask	../stravaAwards.py	/^from flask import Flask, request$/;"	kind:namespace	line:7
+StravaConsistancyAward	../service/AwardManager.py	/^from StravaConsistancyAward import StravaConsistancyAward$/;"	kind:namespace	line:2
+StravaConsistancyAward	../service/StravaConsistancyAward.py	/^class StravaConsistancyAward:   $/;"	kind:class	line:4
+StravaConsistancyAward	../stravaAwards.py	/^from service.StravaConsistancyAward import StravaConsistancyAward$/;"	kind:namespace	line:5
+StravaConsistancyAward.py	../service/StravaConsistancyAward.py	1;"	kind:file	line:1
+SubscriptionManager	../stravaAwards.py	/^from service import AwardManager, ActivityManager, emailUtilities, ConfigService, SubscriptionManager$/;"	kind:namespace	line:4
+SubscriptionManager.py	../service/SubscriptionManager.py	1;"	kind:file	line:1
+__init__	../service/StravaConsistancyAward.py	/^    def __init__ (self, name, eD, eW, eM, message, requiredActivites, eT):$/;"	kind:member	line:6
+__init__.py	../__init__.py	1;"	kind:file	line:1
+__init__.py	../server/__init__.py	1;"	kind:file	line:1
+__init__.py	../service/__init__.py	1;"	kind:file	line:1
+add_award_to_db	../service/AwardManager.py	/^def add_award_to_db(user_id, start_date, end_date, type_id):$/;"	kind:function	line:43
+app	../server.py	/^app = Flask('server')$/;"	kind:variable	line:13
+app	../stravaAwards.py	/^app = Flask(__name__)$/;"	kind:variable	line:10
+arrow	../service/ActivityManager.py	/^import arrow$/;"	kind:namespace	line:3
+arrow	../service/AwardManager.py	/^import arrow$/;"	kind:namespace	line:3
+arrow	../service/StravaConsistancyAward.py	/^import arrow$/;"	kind:namespace	line:2
+arrow	../stravaAwards.py	/^import arrow$/;"	kind:namespace	line:3
+authorized	../server/routes.py	/^def authorized():$/;"	kind:function	line:67
+awardLogic	../service/StravaConsistancyAward.py	/^    def awardLogic(self):$/;"	kind:member	line:19
+checkAwardOccured	../service/AwardManager.py	/^def checkAwardOccured(award):$/;"	kind:function	line:7
+closeConnection	../service/ActivityManager.py	/^def closeConnection(conn):$/;"	kind:function	line:49
+config	../service/ConfigService.py	/^config = ConfigParser.RawConfigParser()$/;"	kind:variable	line:3
+createAwards	../service/AwardManager.py	/^def createAwards():$/;"	kind:function	line:75
+datetime	../service/StravaConsistancyAward.py	/^from datetime import datetime, timedelta, tzinfo$/;"	kind:namespace	line:1
+emailUtilities	../server/routes.py	/^from service import AwardManager, emailUtilities$/;"	kind:namespace	line:3
+emailUtilities	../stravaAwards.py	/^from service import AwardManager, ActivityManager, emailUtilities, ConfigService, SubscriptionManager$/;"	kind:namespace	line:4
+emailUtilities.py	../service/emailUtilities.py	1;"	kind:file	line:1
+fetchAllDb	../service/ActivityManager.py	/^def fetchAllDb(sql, params=None):$/;"	kind:function	line:23
+flask	../server/routes.py	/^import flask$/;"	kind:namespace	line:1
+getActivityType	../service/ActivityManager.py	/^def getActivityType(activity):$/;"	kind:function	line:72
+getActvitesFromAPI	../service/ActivityManager.py	/^def getActvitesFromAPI(afterDate = '2016-01-1'):$/;"	kind:function	line:16
+getAllStoredActivities	../service/ActivityManager.py	/^def getAllStoredActivities(afterDate = '2016-0-01'):$/;"	kind:function	line:64
+getAndStoreActivites	../stravaAwards.py	/^def getAndStoreActivites():$/;"	kind:function	line:30
+getAwardText	../service/StravaConsistancyAward.py	/^    def getAwardText(self):$/;"	kind:member	line:62
+getAwardType	../service/StravaConsistancyAward.py	/^    def getAwardType(self):$/;"	kind:member	line:55
+getConfigVar	../service/ConfigService.py	/^def getConfigVar(value, section='development'):$/;"	kind:function	line:8
+getDbCCursor	../service/ActivityManager.py	/^def getDbCCursor():$/;"	kind:function	line:44
+getEndDate	../service/StravaConsistancyAward.py	/^    def getEndDate(self):$/;"	kind:member	line:52
+getPublicUrl	../service/SubscriptionManager.py	/^def getPublicUrl():$/;"	kind:function	line:17
+getStartDate	../service/StravaConsistancyAward.py	/^    def getStartDate(self):$/;"	kind:member	line:39
+getStravaClient	../service/ActivityManager.py	/^def getStravaClient():$/;"	kind:function	line:9
+get_award_from_db	../service/AwardManager.py	/^def get_award_from_db(start_date, end_date, type):$/;"	kind:function	line:29
+get_email_server	../service/emailUtilities.py	/^def get_email_server():$/;"	kind:function	line:34
+hello_world	../server.py	/^def hello_world():$/;"	kind:function	line:17
+hello_world	../server/routes.py	/^def hello_world():$/;"	kind:function	line:14
+index	../server/routes.py	/^def index():$/;"	kind:function	line:18
+insertDb	../service/ActivityManager.py	/^def insertDb(sql, params):$/;"	kind:function	line:53
+json	../server/routes.py	/^import json$/;"	kind:namespace	line:4
+json	../service/SubscriptionManager.py	/^import json$/;"	kind:namespace	line:4
+jsonify	../server/routes.py	/^from flask import jsonify, request$/;"	kind:namespace	line:2
+list_award	../server/routes.py	/^def list_award(user_id, date):$/;"	kind:function	line:22
+main	../stravaAwards.py	/^def main():$/;"	kind:function	line:59
+os	../service/SubscriptionManager.py	/^import os$/;"	kind:namespace	line:3
+pprint	../stravaAwards.py	/^from pprint import pprint$/;"	kind:namespace	line:2
+read	../service/ConfigService.py	/^def read():$/;"	kind:function	line:5
+read	../service/__init__.py	/^from ConfigService import read$/;"	kind:namespace	line:1
+request	../server.py	/^from flask import Flask, request$/;"	kind:namespace	line:1
+request	../server/routes.py	/^from flask import jsonify, request$/;"	kind:namespace	line:2
+request	../stravaAwards.py	/^from flask import Flask, request$/;"	kind:namespace	line:7
+routes.py	../server/routes.py	1;"	kind:file	line:1
+save_award	../service/AwardManager.py	/^def save_award(award, user_id):$/;"	kind:function	line:40
+send_email	../service/emailUtilities.py	/^def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com'], sender='jahughes112@gmail.com', test=0):$/;"	kind:function	line:16
+server.py	../server.py	1;"	kind:file	line:1
+setNow	../service/StravaConsistancyAward.py	/^    def setNow(self, year, month, day):        $/;"	kind:member	line:67
+smtplib	../service/emailUtilities.py	/^import smtplib$/;"	kind:namespace	line:1
+sqlite3	../service/ActivityManager.py	/^import sqlite3$/;"	kind:namespace	line:2
+sqlite3	../service/AwardManager.py	/^import sqlite3$/;"	kind:namespace	line:1
+start	../server/routes.py	/^def start():$/;"	kind:function	line:79
+storeActivity	../service/ActivityManager.py	/^def storeActivity(activity):  $/;"	kind:function	line:83
+stravaAwards.py	../stravaAwards.py	1;"	kind:file	line:1
+stravaCallback	../server/routes.py	/^def stravaCallback():$/;"	kind:function	line:45
+stravaRoute	../server/routes.py	/^stravaRoute = flask.Blueprint('simple_page', __name__, template_folder='templates')$/;"	kind:variable	line:11
+stravaRoute	../stravaAwards.py	/^from server.routes import stravaRoute$/;"	kind:namespace	line:8
+subprocess	../stravaAwards.py	/^import subprocess$/;"	kind:namespace	line:6
+subscribe	../service/SubscriptionManager.py	/^def subscribe():$/;"	kind:function	line:6
+sys	../server/routes.py	/^import sys$/;"	kind:namespace	line:6
+testAwardOccured	../stravaAwards.py	/^def testAwardOccured(award):$/;"	kind:function	line:16
+test_award_occured	../service/AwardManager.py	/^def test_award_occured(award):$/;"	kind:function	line:89
+timedelta	../service/StravaConsistancyAward.py	/^from datetime import datetime, timedelta, tzinfo$/;"	kind:namespace	line:1
+toDict	../service/StravaConsistancyAward.py	/^    def toDict(self):$/;"	kind:member	line:72
+tzinfo	../service/StravaConsistancyAward.py	/^from datetime import datetime, timedelta, tzinfo$/;"	kind:namespace	line:1

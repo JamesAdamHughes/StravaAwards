@@ -31,10 +31,10 @@ class StravaConsistancyAward:
         );
         """.format(self.getStartDate(), self.getEndDate(), self.exerciseType)
 
-        return sql;
+        return sql
 
     # Return the starting range of the award
-    # This should be the date of the start of the previous week or the previous month, 
+    # This should be the date of the start of the previous week or the previous month,
     # The start of the week is monday
     def getStartDate(self):
         date = None
@@ -67,6 +67,12 @@ class StravaConsistancyAward:
     def setNow(self, year, month, day):        
         string = datetime(year, month, day).isoformat(' ')
         self.now = arrow.get(string, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')     
-        return   
+        return
+    
+    def toDict(self):
+        return {
+            "name" : self.name,
+            "award_text" : self.getAwardText()
+        }
 
 
