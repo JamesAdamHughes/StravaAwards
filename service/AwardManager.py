@@ -4,22 +4,27 @@ import arrow
 
 DBNAME = 'main.db'
 
-def checkAwardOccured(award):
-
+def check_award_occured(award):
+    """
+    Runs the award logic for an award, to test if it has occured
+    Currently only works with SQL statements and consistancy awards
+    """
     conn = sqlite3.connect(DBNAME)
     c = conn.cursor()
 
     # select from the database as needed
-    awardSql = award.awardLogic()
+    award_sql = award.awardLogic()
 
-    c.execute(awardSql)
+    c.execute(award_sql)
 
-    # Probably should pt this in the award object itself
+    # Probably should put this in the award object itself
     result = c.fetchone()
 
     conn.commit()
     conn.close()
 
+    # check if the required no of acvities exist, 
+    # Also check if the same award has already been given
     if result[0] == award.requiredActivites:
         return True
     else:
@@ -37,12 +42,14 @@ def get_award_from_db(start_date, end_date, type):
     select top 1 * from tb_award where
     """
 
+
 def save_award(award, user_id):
     """
     Takes an award and saves ti to the db
     """
     print "[awardM] saving award: " + str(award.name)
     return add_award_to_db(user_id, award)
+
 
 def add_award_to_db(user_id, award):
     """
@@ -68,11 +75,11 @@ def add_award_to_db(user_id, award):
             ?
         );
     """
-    # params = (user_id, start_date, end_date, type_id)
 
-    # if params:
-    result = c.execute(sql, [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()])   
-    print result
+    result = c.execute(sql, [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()])  
+
+    conn.commit()
+    conn.close() 
     return
 
 
@@ -103,4 +110,4 @@ def test_award_occured(award, now_date="2017-07-09"):
     print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate())
     print arrow.get(award.getStartDate()).humanize()
 
-    return checkAwardOccured(award)
+    return check_award_occured(award)

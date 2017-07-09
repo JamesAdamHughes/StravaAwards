@@ -15,13 +15,13 @@ Your StravaAwards Team
 
 def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com'], sender='jahughes112@gmail.com', test=0):
     """ Send an email """
-    smtpserver = get_email_server()
-    email = emailTemplate.format(subject, body)
-
     if test:
         #don't send email during testing
         print "Email disabled for test"
         return "Email disabled for test"
+
+    smtpserver = get_email_server()
+    email = emailTemplate.format(subject, body)
 
     # Try sending the email
     try:
