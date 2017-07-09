@@ -14,7 +14,7 @@ def getStravaClient():
 
     return client
 
-def get_actvites_from_api(after_date='2016-01-1', limit=200):
+def get_actvites_from_api(after_date, limit=200):
     """
     Returns a list of user activites created after the after date
     """
@@ -25,9 +25,15 @@ def get_actvites_from_api(after_date='2016-01-1', limit=200):
 
     return activites
 
-def get_and_save_actvites_from_api(after_date='2016-01-1'):
-    activites = get_actvites_from_api(after_date)
-    result = [store_activity(a) for a in activites]
+def get_and_save_actvites_from_api(after_date=None):
+    if after_date is None:
+        after_date = arrow.now().replace(years=-1).format("YYYY-MM-DD")
+    
+    print "[activityM] after_date: " + after_date
+
+    activites = get_actvites_from_api(str(after_date))
+    print "[activityM] " + str(activites)
+    [store_activity(a) for a in activites]
     return activites
 
 def fetchAllDb(sql, params=None):
@@ -95,7 +101,7 @@ def store_activity(activity):
     Save startdate as iso format for consistancy
     """
     start_date = arrow.get(activity.start_date)
-    print "[activityM] saving activity: " + str(activity.serialize())
+    print "[activityM] saving activity: " + str(activity.serialize()["fk_strava_activity_id"])
 
     sql = """
         insert or ignore into tb_activity (
@@ -110,7 +116,6 @@ def store_activity(activity):
             ?
         );
     """
-  
     return insertDb(sql, (activity.fk_strava_activity_id, start_date.format(), activity.name, getActivityType(activity)))
 
      

@@ -1,6 +1,8 @@
 import smtplib
 import ConfigService
 
+TESTING = 0
+
 emailTemplate = """From: StravaAwards <from@fromdomain.com>
 To: To Person <to@todomain.com>
 Subject: You Won a Strava {0} Award!
@@ -13,22 +15,23 @@ Thanks,
 Your StravaAwards Team
 """
 
-def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com'], sender='jahughes112@gmail.com', test=0):
+def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com'], sender='jahughes112@gmail.com', test=TESTING):
     """ Send an email """
     if test:
         #don't send email during testing
-        print "Email disabled for test"
-        return "Email disabled for test"
+        print "[emailU] Email disabled for test"
+        return "[emailU] Email disabled for test"
 
+    print "[emailU] sending email..."
     smtpserver = get_email_server()
     email = emailTemplate.format(subject, body)
 
     # Try sending the email
     try:
         smtpserver.sendmail(sender, receivers, email)
-        print "Successfully sent email"
+        print "[emailU] Successfully sent email"
     except smtplib.SMTPException:
-        print "Error: unable to send email"
+        print "[emailU] Error: unable to send email"
 
 
 def get_email_server():

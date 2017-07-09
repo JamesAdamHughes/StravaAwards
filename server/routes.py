@@ -1,6 +1,6 @@
 import flask
 from flask import jsonify, request
-from service import AwardManager, emailUtilities, ActivityManager
+from service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager
 import json
 import arrow
 
@@ -46,26 +46,36 @@ def award_list(user_id):
     onlyNew = request.args.get('onlyNew')
 
     if date is None:
-        date = arrow.now().format("YYYY-M-D")
+        date = arrow.now().format("YYYY-MM-DD HH:mm:ss")
     
     if onlyNew is None or onlyNew == 'true':
         onlyNew = True
     elif onlyNew == 'false':
         onlyNew = False
-
+    
     new_awards = AwardManager.get_new_awards_for_user(user_id, date, onlyNew)
-
     for award in new_awards:
-        emailUtilities.send_email(award.name, award.getAwardText(), test=1)
+        emailUtilities.send_email(award.name, award.getAwardText())
         res["awards"].append(award.serialize())
 
     res["numberAwards"] = len(res["awards"])
     res["onlyNew"] = onlyNew
+    res["now_date"] = date
 
     return jsonify(res)
 
 @stravaRoute.route('/strava/callback', methods=['POST', 'GET'])
 def stravaCallback():
+    """
+    Endpoint handles strava subscriptions
+    GET 
+        The callback verification for subscribing to events
+    POST 
+        Called when user uploads an activity
+        Need to get the users activites again and re-do award logic
+
+        todo use the activity id to get user id, and call their info again
+    """
 
     if request.method == 'GET':
         hubChallangeToken = request.args.get('hub.challenge')
@@ -76,13 +86,25 @@ def stravaCallback():
         }
 
     elif request.method == 'POST':
-        data = request.data
-        dataDict = json.loads(data)
-        print dataDict
         res = {
-            'ok': True
+            'ok': True,
+            "awards" : []
         }
-    
+
+        data_dict = json.loads(request.data)
+        print "[server] Subscripton: User uploaded activity " + str(data_dict)
+
+        # Load the users activity data again
+        ActivityManager.get_and_save_actvites_from_api()
+
+        new_awards = AwardManager.get_new_awards_for_user(1, 
+            arrow.now().replace(hours=-1).format("YYYY-MM-DD HH:mm:ss"))
+        for award in new_awards:            
+            emailUtilities.send_email(award.name, award.getAwardText())
+            res["awards"].append(award.serialize())
+        
+        res["numberAwards"] = len(res["awards"])
+        
     return jsonify(res)
 
 @stravaRoute.route('/authorized', methods=['GET', 'POST'])
@@ -92,14 +114,14 @@ def authorized():
 
     print "code: " , code
 
-    # access_token = client.exchange_code_for_token(client_id=15341, client_secret='f7e5bc402cb53885ee0c4d445d4e84036fe2a651', code=code)
     # print "access Token: " + str(access_token)
 
     # return 'Authorised: ' + str(access_token)
 
-@stravaRoute.route('/start', methods=['GET'])
-def start():
-    
-    print 'hello'
+@stravaRoute.route('/strava/subscribe/<user_id>', methods=['GET'])
+def subscribe_user(user_id):    
+
+    print '[server] subscribing to user events'
+    SubscriptionManager.subscribe()
     
     print 'done subscription'

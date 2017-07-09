@@ -3,13 +3,14 @@ import arrow
 
 class StravaConsistancyAward:   
 
-    def __init__ (self, name, eD, eW, eM, message, requiredActivites, eT):
+    def __init__ (self, name, eD, eW, eM, message, requiredActivites, requiredActivitesPerWeek, eT):
         self.epochDays          = eD
         self.epochWeeks         = eW
         self.epochMonths        = eM
         self.name               = name
         self.message            = message
         self.requiredActivites  = requiredActivites
+        self.requiredActivitesPerWeek = requiredActivitesPerWeek
         self.exerciseType = eT
         
         # Setup datetime used as "now", using timezone aware date
@@ -27,10 +28,10 @@ class StravaConsistancyAward:
                     and start_date < '{1}'
                     and type = {2}
             group by weekNo
-            having count(*) > 0
+            having count(*) = {3}
         );
-        """.format(self.getStartDate(), self.getEndDate(), self.exerciseType)
-
+        """.format(self.getStartDate(), self.getEndDate(), self.exerciseType, self.requiredActivitesPerWeek)
+        
         return sql
 
     # Return the starting range of the award
@@ -46,11 +47,14 @@ class StravaConsistancyAward:
         else:
             date = self.now - timedelta(days=self.now.weekday(), weeks=self.epochMonths*4)
 
-        return date.format()
+        return date.format("YYYY-MM-DD 00:00:00")
 
     # Can't win awards for exercises done after "now"
     def getEndDate(self):
-        return self.now.format()
+        # TODO make this work for weeks and month
+        date = arrow.get(self.getStartDate()) + timedelta(days=6)
+        return date.format("YYYY-MM-DD 23:59:59")
+
 
     def getAwardType(self):
         exerciseTypes = {
@@ -68,7 +72,7 @@ class StravaConsistancyAward:
         Manually set the time of "now"
         Used for testing different dates. Default is UTC
         """     
-        self.now = arrow.get(date, 'YYYY-M-D').replace(tzinfo='local')     
+        self.now = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')     
         return
     
     def serialize(self):

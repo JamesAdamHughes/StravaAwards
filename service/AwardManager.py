@@ -15,7 +15,6 @@ def check_award_occured(award, user_id, onlyNew):
 
     # select from the database as needed
     award_sql = award.awardLogic()
-
     c.execute(award_sql)
 
     # Probably should put this in the award object itself
@@ -29,18 +28,16 @@ def check_award_occured(award, user_id, onlyNew):
     previous_awards = None
     if onlyNew:
         previous_awards = get_award_from_db(award, user_id)
-        print previous_awards
+        print "[awardM] previous_awards" + previous_awards
 
     if activites[0] == award.requiredActivites:
         if previous_awards is None:
-            print "awarding user!"
+            print "[awardM] awarding user!"
             return True
         else:
-            print "found existing award" 
-            print previous_awards 
+            print "[awardM] found existing award " + str(previous_awards)
     else:
-        print "not enough activities" 
-        print activites
+        print "[awardM] not enough activities" + str(activites)
     
     return False
 
@@ -60,9 +57,10 @@ def get_award_from_db(award, user_id):
         and datetime_end = ?
         and type_id = ?
         and fk_user_id = ?
+        and name = ?
         ;
     """
-    c.execute(sql, [award.getStartDate(), award.getEndDate(), award.getAwardType(), user_id])
+    c.execute(sql, [award.getStartDate(), award.getEndDate(), award.getAwardType(), user_id, award.name])
     result = c.fetchone()
 
     print "[awardM] fetched award: " + str(result)
@@ -118,25 +116,28 @@ def createAwards():
     """
     awards = []
     # todo write this up in json and read from file
-    awards.append(StravaConsistancyAward('TwiceThisWeekAward', 0, 1, 0, 'You ran twice this week!', 2, 0))
-    awards.append(StravaConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 0))
-    awards.append(StravaConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 0))
-    awards.append(StravaConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 0))
+    awards.append(StravaConsistancyAward('TwiceThisWeekAward', 0, 1, 0, 'You ran twice this week!', 1, 2, 0))
+    awards.append(StravaConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
+    # awards.append(StravaConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 0))
+    # awards.append(StravaConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 0))
 
     return awards
 
-def get_new_awards_for_user(user_id, now_date="2017-7-9", onlyNew=True):
+def get_new_awards_for_user(user_id, now_date, onlyNew=True):
     """
     Takes an award type, applies it to the activites data
     Returns true if the award occured
     """
     valid_awards = []
+    
+    print now_date
 
     for award in createAwards():
         # Force set date for testing
         award.set_now(now_date)
 
         print "[awardM] Checking " + award.name + " from " + arrow.get(award.getStartDate()).humanize()
+        print award.getStartDate()
 
         # Check if the award happened
         occured = check_award_occured(award, user_id, onlyNew)
