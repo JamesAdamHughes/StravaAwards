@@ -1,6 +1,7 @@
 import sqlite3
 from StravaConsistancyAward import StravaConsistancyAward
 import arrow
+from service import emailUtilities
 
 DBNAME = 'main.db'
 
@@ -25,16 +26,16 @@ def check_award_occured(award, user_id):
 
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given
-    previousAwards = get_award_from_db(award, user_id)
-    print previousAwards
+    previous_awards = get_award_from_db(award, user_id)
+    print previous_awards
 
     if activites[0] == award.requiredActivites:
-        if previousAwards is None:
+        if previous_awards is None:
             print "awarding user!"
             return True
         else:
             print "found existing award" 
-            print previousAwards 
+            print previous_awards 
     else:
         print "not enough activities" 
         print activites
@@ -102,7 +103,7 @@ def add_award_to_db(user_id, award):
         );
     """
 
-    result = c.execute(sql, [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()])  
+    c.execute(sql, [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()])  
 
     conn.commit()
     conn.close() 
@@ -122,18 +123,25 @@ def createAwards():
 
     return awards
 
-
-def test_award_occured(award, user_id, now_date="2017-07-09"):
+def get_new_awards_for_user(user_id, now_date="2017-7-9"):
     """
     Takes an award type, applies it to the activites data
     Returns true if the award occured
     """
-    print "Checking " + award.name
+    valid_awards = []
 
-    # Force set date for testing
-    award.set_now(now_date)
+    for award in createAwards():
+        # Force set date for testing
+        award.set_now(now_date)
 
-    print "Award time range: " + str(award.getStartDate()) + " to " + str(award.getEndDate())
-    print arrow.get(award.getStartDate()).humanize()
+        print "[awardM] Checking " + award.name + " from " + arrow.get(award.getStartDate()).humanize()
 
-    return check_award_occured(award, user_id)
+        # Check if the award happened
+        occured = check_award_occured(award, user_id)
+        if occured:
+            # save award to db, send email
+            valid_awards.append(award)
+            save_award(award, user_id)
+            print "[awardM] awarding: " + award.getAwardText()
+    return valid_awards
+

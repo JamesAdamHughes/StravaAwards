@@ -2,6 +2,7 @@ import flask
 from flask import jsonify, request
 from service import AwardManager, emailUtilities, ActivityManager
 import json
+import arrow
 
 import sys
 # print sys.path
@@ -30,27 +31,30 @@ def activity_load(user_id, from_date="2016-01-01"):
     acts = [ activity.serialize() for activity in acts]
     return jsonify(acts)
 
-@stravaRoute.route('/award/list/<user_id>/<date>', methods=['GET'])
-def award_list(user_id, date):
+@stravaRoute.route('/award/list/<user_id>', methods=['GET'])
+@stravaRoute.route('/award/list/<user_id>/<date>/', methods=['GET'])
+def award_list(user_id, date=None):
     """
     Returns a JSON of all awards a user has won on a given date
     Also send an email to the user for each award they have won
     """
-    valid_awards = []
+    res = {
+        "ok": True,
+        "awards" : [],
+        "numberAwards" : 0 
+    }
+    if date is None:
+        date = arrow.now().format("YYYY-M-D")
 
-    for award in AwardManager.createAwards():
-        occured = AwardManager.test_award_occured(award, user_id)
-        if occured:
-            # save award to db, send email
-            AwardManager.save_award(award, user_id)
+    new_awards = AwardManager.get_new_awards_for_user(user_id, date)
 
-            valid_awards.append(award.serialize())
-            print award.getAwardText()
-            print 'Sending Email...'
-            emailUtilities.send_email(award.name, award.getAwardText(), test=1)
-        print '\n'
+    for award in new_awards:
+        emailUtilities.send_email(award.name, award.getAwardText(), test=1)
+        res["awards"].append(award.serialize())
 
-    return jsonify(valid_awards)
+    res["numberAwards"] = len(res["awards"])
+
+    return jsonify(res)
 
 @stravaRoute.route('/strava/callback', methods=['POST', 'GET'])
 def stravaCallback():
@@ -63,7 +67,6 @@ def stravaCallback():
             'hub.challenge': hubChallangeToken
         }
 
-        return jsonify(res)
     elif request.method == 'POST':
         data = request.data
         dataDict = json.loads(data)
@@ -71,8 +74,8 @@ def stravaCallback():
         res = {
             'ok': True
         }
-
-        return jsonify(res)
+    
+    return jsonify(res)
 
 @stravaRoute.route('/authorized', methods=['GET', 'POST'])
 def authorized():
