@@ -1,7 +1,7 @@
 import sqlite3
 from StravaConsistancyAward import StravaConsistancyAward
 import arrow
-from service import emailUtilities
+from StravaAwards.service import emailUtilities
 
 DBNAME = 'main.db'
 
@@ -28,7 +28,7 @@ def check_award_occured(award, user_id, onlyNew):
     previous_awards = None
     if onlyNew:
         previous_awards = get_award_from_db(award, user_id)
-        print "[awardM] previous_awards" + previous_awards
+        print "[awardM] previous_awards" + str(previous_awards)
 
     if activites[0] == award.requiredActivites:
         if previous_awards is None:
