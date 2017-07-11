@@ -52,7 +52,14 @@ class StravaConsistancyAward:
     # Can't win awards for exercises done after "now"
     def getEndDate(self):
         # TODO make this work for weeks and month
-        date = arrow.get(self.getStartDate()) + timedelta(days=6)
+        if (self.epochDays != 0):
+            date = arrow.get(self.getStartDate()) + timedelta(days=self.epochDays)
+        elif (self.epochWeeks != 0):
+            date = arrow.get(self.getStartDate()) + timedelta(weeks=(1 * (self.epochWeeks))) - timedelta(days=1)
+        else:
+            # TODO make this work
+            date = self.now - timedelta(days=self.now.weekday(), weeks=self.epochMonths*4)
+        # date = arrow.get(self.getStartDate()) + timedelta(days=6)
         return date.format("YYYY-MM-DD 23:59:59")
 
 

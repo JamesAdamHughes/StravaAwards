@@ -37,7 +37,7 @@ def check_award_occured(award, user_id, onlyNew):
         else:
             print "[awardM] found existing award " + str(previous_awards)
     else:
-        print "[awardM] not enough activities" + str(activites)
+        print "[awardM] not enough new activities" + str(activites)
     
     return False
 
@@ -118,8 +118,8 @@ def createAwards():
     # todo write this up in json and read from file
     awards.append(StravaConsistancyAward('TwiceThisWeekAward', 0, 1, 0, 'You ran twice this week!', 1, 2, 0))
     awards.append(StravaConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
-    # awards.append(StravaConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 0))
-    # awards.append(StravaConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 0))
+    awards.append(StravaConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
+    awards.append(StravaConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 1, 0))
 
     return awards
 
@@ -129,15 +129,12 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
     Returns true if the award occured
     """
     valid_awards = []
-    
-    print now_date
-
     for award in createAwards():
         # Force set date for testing
         award.set_now(now_date)
 
         print "[awardM] Checking " + award.name + " from " + arrow.get(award.getStartDate()).humanize()
-        print award.getStartDate()
+        print "[awardM] date range is: " + award.getStartDate() + " to " + award.getEndDate()
 
         # Check if the award happened
         occured = check_award_occured(award, user_id, onlyNew)
