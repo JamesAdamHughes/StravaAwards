@@ -1,7 +1,7 @@
 import sqlite3
 from StravaConsistancyAward import StravaConsistancyAward
 import arrow
-from service import emailUtilities
+from StravaAwards.service import emailUtilities
 
 DBNAME = 'main.db'
 

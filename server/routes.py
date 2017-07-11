@@ -1,6 +1,6 @@
 import flask
 from flask import jsonify, request
-from service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager
+from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager
 import json
 import arrow
 

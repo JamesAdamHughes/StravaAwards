@@ -1,8 +1,8 @@
 from stravalib.client import Client
 import sqlite3
 import arrow
-from service import ConfigService
-from service.Activity import Activity
+from StravaAwards.service import ConfigService
+from StravaAwards.service.Activity import Activity
 
 DBNAME = 'main.db'
 
