@@ -13,7 +13,7 @@ stravaRoute = flask.Blueprint('simple_page', __name__, template_folder='template
 
 @stravaRoute.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return 'Hello, World! Watch this space for my Strava App web interface!'
 
 @stravaRoute.route('/')
 def index():
