@@ -3,8 +3,10 @@ import sqlite3
 import arrow
 from StravaAwards.service import ConfigService
 from StravaAwards.service.Activity import Activity
+from StravaAwards import definitions
 
-DBNAME = 'main.db'
+DBNAME = definitions.ROOT_DIR +  '/main.db'
+print '[activityM] root dir: ' + DBNAME
 
 # Create a strava Client
 def getStravaClient():
@@ -58,6 +60,7 @@ def fetchAllDb(sql, params=None):
     return results
 
 def getDbCCursor():
+    print 'dbname: ' + DBNAME
     conn = sqlite3.connect(DBNAME)
     c = conn.cursor()
     return c, conn
