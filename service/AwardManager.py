@@ -2,8 +2,10 @@ import sqlite3
 from StravaConsistancyAward import StravaConsistancyAward
 import arrow
 from StravaAwards.service import emailUtilities
+from StravaAwards import definitions
 
-DBNAME = 'main.db'
+DBNAME = definitions.ROOT_DIR +  '/main.db'
+print '[activityM] root dir: ' + DBNAME
 
 def check_award_occured(award, user_id, onlyNew):
     """
