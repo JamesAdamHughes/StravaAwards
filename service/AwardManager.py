@@ -5,7 +5,6 @@ from StravaAwards.service import emailUtilities
 from StravaAwards import definitions
 
 DBNAME = definitions.ROOT_DIR +  '/main.db'
-print '[activityM] root dir: ' + DBNAME
 
 def check_award_occured(award, user_id, onlyNew):
     """
@@ -141,7 +140,7 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
         # Check if the award happened
         occured = check_award_occured(award, user_id, onlyNew)
         if occured:
-            # save award to db, send email
+            # save award to db
             valid_awards.append(award)
             save_award(award, user_id)
             print "[awardM] awarding: " + award.getAwardText()

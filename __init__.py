@@ -9,13 +9,11 @@ app = Flask('server')
 app.json_encoder = CustomJSONEncoder
 app.register_blueprint(stravaRoute)
 
+#Load the config file for the enviroment
 ConfigService.read(definitions.ROOT_DIR + '/config.cfg')
-ConfigService.addSectionAndValue('production','test', 1) 
 
-print 'root dir: ' + definitions.ROOT_DIR
+print '[init] root dir: ' + definitions.ROOT_DIR
 if __name__ == "__main__":
+    print '[main] server running at :5000'
     app.run()
-# run threaded so that we can handle multiple requests (for subscription events)
-# app.run(threaded=True)
 
-print '[main] server running at :5000'

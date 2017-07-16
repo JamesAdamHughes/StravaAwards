@@ -15,11 +15,16 @@ def subscribe():
     return
  
 def getPublicUrl():
-    a = os.popen("curl  http://localhost:4041/api/tunnels > tunnels.json").read()  
+    enviroment = os.getenv('ENVIROMENT')
+    print enviroment
+    if enviroment == 'development':
+        a = os.popen("curl  http://localhost:4041/api/tunnels > tunnels.json").read()  
 
-    with open('tunnels.json') as data_file:    
-        datajson = json.load(data_file)
-    for i in datajson['tunnels']:
-        public_url = i['public_url']  
+        with open('tunnels.json') as data_file:    
+            datajson = json.load(data_file)
+        for i in datajson['tunnels']:
+            public_url = i['public_url']  
 
-    return public_url
+        return public_url
+    else:
+        return ConfigService.getConfigVar('hostname')

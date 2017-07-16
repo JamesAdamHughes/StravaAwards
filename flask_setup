@@ -1,7 +1,7 @@
 #!/bin/bash
 export PYTHONPATH=$HOME/projects/StravaAwrads:$PYTHONPATH
 export FLASK_DEBUG=0
-export FLASK_APP=stravaAwards.py
+export FLASK_APP=__init__.py
 echo "running flask"
 echo $FLASK_APP
 flask run

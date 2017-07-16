@@ -1,4 +1,6 @@
 *.cfg
+flask_setup
+tunnels.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

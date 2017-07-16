@@ -1,5 +1,6 @@
 import smtplib
 import ConfigService
+import os
 
 TESTING = 0
 
@@ -17,12 +18,16 @@ Your StravaAwards Team
 
 def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com', 'sn13762@my.bristol.ac.uk'  ,'test@allaboutspam.com'], sender='jahughes112@gmail.com', test=TESTING):
     """ Send an email """
-    if test:
+
+    enviroment = os.getenv('ENVIROMENT')
+
+    print "[emailU] sending email..."
+
+    if enviroment == 'development':
         #don't send email during testing
         print "[emailU] Email disabled for test"
         return "[emailU] Email disabled for test"
 
-    print "[emailU] sending email..."
     smtpserver = get_email_server()
     email = emailTemplate.format(subject, body, receivers[0])
 
@@ -35,25 +40,7 @@ def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com', 
 
 
 def get_email_server():
-    """Connect to GMail SMPT Server"""
+    """Connect to Postfix Server"""
     smtpserver = smtplib.SMTP("localhost",25)
-#    smtpserver.connect()
-
-    #smtpserver.ehlo()
-    #smtpserver.starttls()
-    #smtpserver.login(ConfigService.getConfigVar('smpt.username'),
-          #               ConfigService.getConfigVar('smpt.password'))
- 
-
-    # login with my credentials
-#    try:
-        #smtpserver.ehlo()
-        #smtpserver.starttls()
-	#print ConfigService.getConfigVar('smpt.password')
-        #smtpserver.login(ConfigService.getConfigVar('smpt.username'),
-         #                ConfigService.getConfigVar('smpt.password'))
- #   except smtplib.SMTPAuthenticationError, e:
-  #      print 'Incorrect Email login Details' + str(e)
-   #     exit()
 
     return smtpserver

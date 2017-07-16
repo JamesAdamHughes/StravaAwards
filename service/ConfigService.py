@@ -4,7 +4,6 @@ config = ConfigParser.RawConfigParser()
 
 def read(path):
     print "reading config..." + path
-    #print config.read(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.cfg'))
     print config.read(path)
 
 def getConfigVar(value, section='development'):
@@ -12,7 +11,7 @@ def getConfigVar(value, section='development'):
     print '[config] using section ' + section
     enviroment = os.getenv('ENVIROMENT')
     print '[config] enviroment ' + str(enviroment)
-    return config.get(section, value)
+    return config.get(enviroment, value)
 
 
 def addSectionAndValue(section, name, value):
