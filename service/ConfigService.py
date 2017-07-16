@@ -7,10 +7,8 @@ def read(path):
     print config.read(path)
 
 def getConfigVar(value, section='development'):
-    print '[config] sections: ' + str(config.sections())
-    print '[config] using section ' + section
     enviroment = os.getenv('ENVIROMENT')
-    print '[config] enviroment ' + str(enviroment)
+    print '[config] loading enviroment ' + str(enviroment)
     return config.get(enviroment, value)
 
 
