@@ -123,5 +123,10 @@ def subscribe_user(user_id):
 
     print '[server] subscribing to user events'
     SubscriptionManager.subscribe()
+    print '[server] done subscription'
+
+    return jsonify({
+        "ok": True,
+        "subscribe_user": user_id
+    })
     
-    print 'done subscription'
