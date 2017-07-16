@@ -4,7 +4,6 @@ DBNAME = definitions.ROOT_DIR +  '/main.db'
 print '[activityM] root dir: ' + DBNAME
 
 def getDbCCursor():
-    print 'dbname: ' + DBNAME
     conn = sqlite3.connect(DBNAME)
     c = conn.cursor()
     return c, conn
