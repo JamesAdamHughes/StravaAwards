@@ -27,4 +27,4 @@ def getPublicUrl():
 
         return public_url
     else:
-        return ConfigService.getConfigVar('hostname')
+        return 'http://' + ConfigService.getConfigVar('hostname')
