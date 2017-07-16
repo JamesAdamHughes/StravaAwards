@@ -121,6 +121,7 @@ def createAwards():
     awards.append(StravaConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
     awards.append(StravaConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
     awards.append(StravaConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 1, 0))
+    awards.append(StravaConsistancyAward('Quadrupal threat', 0, 1, 0, 'You ran four times this month!', 1, 4, 0))
 
     return awards
 
