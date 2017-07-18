@@ -4,7 +4,7 @@ import os
 
 TESTING = 0
 
-emailTemplate = """From: StravaAwards <noreply@jameshughes.info.com>
+emailTemplate = """From: StravaAwards <noreply@jameshughes.info>
 To: To Person <{2}>
 Subject: You Won a Strava {0} Award!
 
