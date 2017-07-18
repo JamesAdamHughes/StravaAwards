@@ -33,7 +33,7 @@ def get_and_save_actvites_from_api(after_date=None):
     print "[activityM] after_date: " + after_date
 
     activites = get_actvites_from_api(str(after_date))
-    print "[activityM] got this many activites: " + len(activites)
+    print "[activityM] got this many activites: " + str(len(activites))
     [store_activity(a) for a in activites]
     return activites
 

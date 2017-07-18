@@ -17,7 +17,7 @@ def check_award_occured(award, user_id, onlyNew):
     # select from the database as needed
     award_sql = award.awardLogic()
     c.execute(award_sql)
-
+    
     # Probably should put this in the award object itself
     activites = c.fetchone()
 
