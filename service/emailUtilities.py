@@ -16,7 +16,7 @@ Thanks,
 Your StravaAwards Team
 """
 
-def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com', 'sn13762@my.bristol.ac.uk'  ,'test@allaboutspam.com'], sender='jahughes112@gmail.com', test=TESTING):
+def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com' ,'test@allaboutspam.com'], sender='noreply@jameshughes.info', test=TESTING):
     """ Send an email """
 
     enviroment = os.getenv('ENVIROMENT')
@@ -41,6 +41,6 @@ def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com', 
 
 def get_email_server():
     """Connect to Postfix Server"""
-    smtpserver = smtplib.SMTP("localhost",25)
+    smtpserver = smtplib.SMTP("localhost", 25)
 
     return smtpserver
