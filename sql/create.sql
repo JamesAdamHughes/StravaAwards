@@ -4,7 +4,8 @@ CREATE TABLE tb_activity (
 	start_date datetimeoffset NOT NULL,
 	name text not null,
 	type integer not null,
-	distance real not null1
+	distance real not null,
+	moving_time real not null
 );
 
 CREATE TABLE tb_award (

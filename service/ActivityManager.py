@@ -15,14 +15,14 @@ def getStravaClient():
 
     return client
 
-def get_actvites_from_api(after_date, limit=200):
+def get_actvites_from_api(after_date, limit=5):
     """
     Returns a list of user activites created after the after date
     """
     client = getStravaClient()
     activites = []
     for activity in client.get_activities(after=after_date, limit=limit):
-        activites.append(Activity(activity.id, activity.name, activity.start_date, activity.type))
+        activites.append(Activity(activity.id, activity.name, activity.start_date, activity.type, activity.distance.get_num(), activity.moving_time.total_seconds()))
 
     return activites
 
@@ -86,17 +86,6 @@ def getAllStoredActivities(afterDate = '2016-0-01'):
 
     return fetchAllDb(sql)
 
-def getActivityType(activity):
-    exerciseTypes = {
-           'Run': 0,
-           'Ride': 1,
-           'Swim': 2,
-           'EBikeRide' : 3,
-           'Workout' : 4,
-           'WeightTraining' : 5             
-        }
-    return exerciseTypes[activity.type_id]
-
 def store_activity(activity):  
     """
     Save startdate as iso format for consistancy
@@ -109,14 +98,26 @@ def store_activity(activity):
             fk_strava_activity_id,
             start_date,
             name,
-            type
+            type,
+            distance,
+            moving_time
         ) values (
+            ?,
+            ?,
             ?,
             ?,
             ?,
             ?
         );
     """
-    return insertDb(sql, (activity.fk_strava_activity_id, start_date.format(), activity.name, getActivityType(activity)))
+    params = [
+        activity.fk_strava_activity_id,
+        start_date.format(),
+        activity.name,
+        activity.get_activity_type(),
+        activity.distance,
+        activity.moving_time
+    ]
+    return insertDb(sql, params)
 
      
