@@ -2,7 +2,7 @@ from stravalib.client import Client
 import sqlite3
 import arrow
 from StravaAwards.service import ConfigService
-from StravaAwards.service.Activity import Activity
+from StravaAwards.model.Activity import Activity
 from StravaAwards import definitions
 
 DBNAME = definitions.ROOT_DIR +  '/main.db'

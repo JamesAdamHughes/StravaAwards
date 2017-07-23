@@ -1,6 +1,6 @@
 import sqlite3
 import arrow
-from StravaAwards.awards import StravaConsistancyAward
+from StravaAwards.model import StravaConsistancyAward
 from StravaAwards.service import emailUtilities
 from StravaAwards import definitions
 

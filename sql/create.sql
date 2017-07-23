@@ -3,7 +3,8 @@ CREATE TABLE tb_activity (
 	fk_strava_activity_id integer not null unique,
 	start_date datetimeoffset NOT NULL,
 	name text not null,
-	type integer not null
+	type integer not null,
+	distance real not null1
 );
 
 CREATE TABLE tb_award (
