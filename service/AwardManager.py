@@ -2,7 +2,7 @@ import sqlite3
 import arrow
 from StravaAwards.model.DistanceAward import DistanceAward
 from StravaAwards.model.ConsistancyAward import ConsistancyAward
-from StravaAwards.service import emailUtilities
+from StravaAwards.service import emailUtilities, DatabaseManager
 from StravaAwards import definitions
 
 DBNAME = definitions.ROOT_DIR +  '/main.db'
@@ -33,8 +33,6 @@ def get_award_from_db(award, user_id):
     """
     Returns an award from the database, using the start end and type as a unique identifier
     """
-    conn = sqlite3.connect(DBNAME)
-    c = conn.cursor()
 
     sql = """
     select * 
@@ -47,13 +45,12 @@ def get_award_from_db(award, user_id):
         and name = ?
         ;
     """
-    c.execute(sql, [award.getStartDate(), award.getEndDate(), award.getAwardType(), user_id, award.name])
-    result = c.fetchone()
+
+    params = [award.getStartDate(), award.getEndDate(), award.getAwardType(), user_id, award.name]
+    result = DatabaseManager.fetch_one(sql, params)
 
     print "[awardM] fetched award: " + str(result)
 
-    conn.commit()
-    conn.close()
     return result
 
 

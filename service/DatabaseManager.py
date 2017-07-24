@@ -39,8 +39,8 @@ def fetch_one(sql, params=None):
     # Map each column in the row, to the associated column name
     results = []
     row = c.fetchone()
-
-    results.append(dict(zip(names, row)))
+    if row:
+        results.append(dict(zip(names, row)))
 
     close_connection(conn)
 
