@@ -1,18 +1,13 @@
-import sqlite3
 import arrow
 from StravaAwards.model.DistanceAward import DistanceAward
 from StravaAwards.model.ConsistancyAward import ConsistancyAward
 from StravaAwards.service import emailUtilities, DatabaseManager
-from StravaAwards import definitions
-
-DBNAME = definitions.ROOT_DIR +  '/main.db'
 
 def check_award_occured(award, user_id, onlyNew):
     """
     Runs the award logic for an award, to test if it has occured
     Currently only works with SQL statements and consistancy awards
     """
-
     occured = award.check_occured()
 
     # check if the required no of acvities exist, 
@@ -24,8 +19,8 @@ def check_award_occured(award, user_id, onlyNew):
 
     if occured and previous_awards is None:
         print "[awardM] awarding user!"
-        return True  
-    
+        return True
+
     return False
 
 
@@ -66,8 +61,6 @@ def add_award_to_db(user_id, award):
     """
     Inserts an award into tb_award
     """
-    conn = sqlite3.connect(DBNAME)
-    c = conn.cursor()
 
     sql = """
         insert into tb_award (
@@ -87,10 +80,9 @@ def add_award_to_db(user_id, award):
         );
     """
 
-    c.execute(sql, [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()])  
+    params = [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()]
+    DatabaseManager.insert_db(sql, params)
 
-    conn.commit()
-    conn.close() 
     return
 
 

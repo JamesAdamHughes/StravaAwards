@@ -1,6 +1,5 @@
 from StravaAwards.model.StravaAward import StravaAward
 from StravaAwards.service import DatabaseManager
-import arrow
 
 class ConsistancyAward(StravaAward):   
 

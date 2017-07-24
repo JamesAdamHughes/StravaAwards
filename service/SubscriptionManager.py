@@ -1,5 +1,5 @@
 from stravalib.client import Client
-import ConfigService
+from StravaAwards.service import ConfigService
 import os
 import json
 
