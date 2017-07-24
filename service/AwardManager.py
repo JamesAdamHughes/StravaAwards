@@ -1,6 +1,7 @@
 import sqlite3
 import arrow
-from StravaAwards.model import StravaConsistancyAward
+from StravaAwards.model.DistanceAward import DistanceAward
+from StravaAwards.model.ConsistancyAward import ConsistancyAward
 from StravaAwards.service import emailUtilities
 from StravaAwards import definitions
 
@@ -31,7 +32,7 @@ def check_award_occured(award, user_id, onlyNew):
         previous_awards = get_award_from_db(award, user_id)
         print "[awardM] previous_awards" + str(previous_awards)
 
-    if activites[0] == award.requiredActivites:
+    if activites[0] == award.required_activites:
         if previous_awards is None:
             print "[awardM] awarding user!"
             return True
@@ -117,11 +118,11 @@ def createAwards():
     """
     awards = []
     # todo write this up in json and read from file
-    awards.append(StravaConsistancyAward('TwiceThisWeekAward', 0, 1, 0, 'You ran twice this week!', 1, 2, 0))
-    awards.append(StravaConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
-    awards.append(StravaConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
-    awards.append(StravaConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 1, 0))
-    awards.append(StravaConsistancyAward('Quadrupal threat', 0, 1, 0, 'You ran four times this month!', 1, 4, 0))
+    awards.append(ConsistancyAward('TwiceThisWeekAward', 0, 1, 0, 'You ran twice this week!', 1, 2, 0))
+    awards.append(ConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
+    awards.append(ConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
+    awards.append(ConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 1, 0))
+    awards.append(ConsistancyAward('Quadrupal threat', 0, 1, 0, 'You ran four times this month!', 1, 4, 0))
 
     return awards
 

@@ -15,7 +15,7 @@ def getStravaClient():
 
     return client
 
-def get_actvites_from_api(after_date, limit=5):
+def get_actvites_from_api(after_date, limit=200):
     """
     Returns a list of user activites created after the after date
     """
