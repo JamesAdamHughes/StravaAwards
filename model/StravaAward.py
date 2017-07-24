@@ -54,22 +54,21 @@ class StravaAward:
 
 
     def getAwardType(self):
-        exerciseTypes = {
+        exercise_types = {
             0: 'Run',
             1: 'Ride'
         }
-        return exerciseTypes[self.exerciseType]
+        return exercise_types[self.exerciseType]
 
     def getAwardText(self):
         return 'You won a {0} Award! {1}'.format(self.name, self.message)
-
 
     def set_now(self, date):
         """
         Manually set the time of "now"
         Used for testing different dates. Default is UTC
-        """     
-        self.now = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')     
+        """
+        self.now = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')
         return
 
     def serialize(self):

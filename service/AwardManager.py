@@ -12,14 +12,16 @@ def check_award_occured(award, user_id, onlyNew):
 
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given
-    previous_awards = None
     if onlyNew:
         previous_awards = get_award_from_db(award, user_id)
         print "[awardM] previous_awards" + str(previous_awards)
 
-    if occured and previous_awards is None:
+    if occured and previous_awards == []:
         print "[awardM] awarding user!"
         return True
+
+    if previous_awards:
+        print "[awardM] found old rewards, NOT REWARDING" + str(previous_awards)    
 
     return False
 
@@ -96,7 +98,8 @@ def createAwards():
     awards.append(ConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
     awards.append(ConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
     awards.append(ConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 1, 0))
-    awards.append(ConsistancyAward('Quadrupal threat', 0, 1, 0, 'You ran four times this month!', 1, 4, 0))
+    # awards.append(ConsistancyAward('Quadrupal threat', 0, 1, 0, 'You ran four times this month!', 1, 4, 0))
+    awards.append(DistanceAward('Warm up', 0, 1, 0, 'You ran 5k this week!',5000 ,0))
 
     return awards
 

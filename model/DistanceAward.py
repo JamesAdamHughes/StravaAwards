@@ -1,6 +1,7 @@
 import arrow
 from datetime import timedelta
 from StravaAwards.model.StravaAward import StravaAward
+from StravaAwards.service import DatabaseManager
 
 class DistanceAward(StravaAward):
 
@@ -17,15 +18,26 @@ class DistanceAward(StravaAward):
 
         return obj
 
-    def awardLogic(self):
+    def check_occured(self):
         """
         Defines the logic that controls if this award is run
         """
 
         sql = """
-        select count(*) 
-            from tb_activity             
-        ;
+        select sum(distance) as total_distance
+        from tb_activity
+        where 1=1
+            and start_date > '2017-07-20'
+            and start_date < ?
+            and type = ?
         """
 
-        return sql
+        params = [self.getEndDate(), self.exerciseType]
+        result = DatabaseManager.fetch_one(sql, params)
+
+        if result[0]['total_distance'] >= self.required_distance:
+            print result
+            print "[award] AWARD REQUIREMENTS MET"
+            return True
+
+        return False
