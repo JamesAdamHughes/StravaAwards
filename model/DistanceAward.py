@@ -27,12 +27,12 @@ class DistanceAward(StravaAward):
         select sum(distance) as total_distance
         from tb_activity
         where 1=1
-            and start_date > '2017-07-20'
+            and start_date > ?
             and start_date < ?
             and type = ?
         """
 
-        params = [self.getEndDate(), self.exerciseType]
+        params = [self.getStartDate(), self.getEndDate(), self.exerciseType]
         result = DatabaseManager.fetch_one(sql, params)
 
         if result[0]['total_distance'] >= self.required_distance:
