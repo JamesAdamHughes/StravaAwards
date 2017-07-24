@@ -1,4 +1,5 @@
 from StravaAwards.model.StravaAward import StravaAward
+from StravaAwards.service import DatabaseManager
 import arrow
 
 class ConsistancyAward(StravaAward):   
@@ -20,13 +21,13 @@ class ConsistancyAward(StravaAward):
         return obj
 
 
-    def awardLogic(self):
+    def check_occured(self):
         """
         Defines the logic that controls if this award is run
         """
 
         sql = """
-        select count(*) from (
+        select count(*) as count, weekNo as weekNo from (
             select strftime('%W', start_date) weekNo, count(*)
             from tb_activity
                 where 1=1
@@ -38,6 +39,14 @@ class ConsistancyAward(StravaAward):
         );
         """.format(self.getStartDate(), self.getEndDate(), self.exerciseType, self.required_activites_per_week)
 
-        return sql
+        activites = DatabaseManager.fetch_one(sql)
 
+        # check if the required no of acvities exist,
+        # Also check if the same award has already been given
+        if activites[0] == self.required_activites:
+            print "[awardM] AWARD REQUIREMENTS MET"
+            return True
+
+        print "[awardM] not enough new activities" + str(activites)
+        return False
 

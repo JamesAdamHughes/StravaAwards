@@ -15,7 +15,7 @@ class StravaAward:
         self.now = arrow.utcnow()
 
 
-    def awardLogic(self):
+    def check_occured(self):
         """
         Defines the logic that controls if this award is run
         """

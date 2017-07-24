@@ -1,30 +1,31 @@
 from StravaAwards import definitions
+import sqlite3
 
 DBNAME = definitions.ROOT_DIR +  '/main.db'
 print '[activityM] root dir: ' + DBNAME
 
-def getDbCCursor():
+def get_db_ccursor():
     conn = sqlite3.connect(DBNAME)
     c = conn.cursor()
     return c, conn
 
-def insertDb(sql, params):
-    c, conn = getDbCCursor()
+def insert_db(sql, params):
+    c, conn = get_db_ccursor()
 
     if params:
         c.execute(sql, params)
-    else :
+    else:
         c.execute(sql)
-   
-    closeConnection(conn)
+
+    close_connection(conn)
     return
 
-def closeConnection(conn):
+def close_connection(conn):
     conn.commit()
     conn.close()
 
-def fetchAllDb(sql, params=None):
-    c, conn = getDbCCursor()
+def fetch_one(sql, params=None):
+    c, conn = get_db_ccursor()
 
     if params:
         c.execute(sql, params)
@@ -33,13 +34,35 @@ def fetchAllDb(sql, params=None):
 
     # Get column names
     names = [description[0] for description in c.description]
-    
+
+    # Get results from the db
+    # Map each column in the row, to the associated column name
+    results = []
+    row = c.fetchone()
+
+    results.append(dict(zip(names, row)))
+
+    close_connection(conn)
+
+    return results
+
+def fetch_all(sql, params=None):
+    c, conn = get_db_ccursor()
+
+    if params:
+        c.execute(sql, params)
+    else:
+        c.execute(sql)
+
+    # Get column names
+    names = [description[0] for description in c.description]
+
     # Get results from the db
     # Map each column in the row, to the associated column name
     results = []
     for row in c.fetchall():
         results.append(dict(zip(names, row)))
-   
-    closeConnection(conn)
+
+    close_connection(conn)
 
     return results

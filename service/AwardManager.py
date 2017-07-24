@@ -12,18 +12,8 @@ def check_award_occured(award, user_id, onlyNew):
     Runs the award logic for an award, to test if it has occured
     Currently only works with SQL statements and consistancy awards
     """
-    conn = sqlite3.connect(DBNAME)
-    c = conn.cursor()
 
-    # select from the database as needed
-    award_sql = award.awardLogic()
-    c.execute(award_sql)
-    
-    # Probably should put this in the award object itself
-    activites = c.fetchone()
-
-    conn.commit()
-    conn.close()
+    occured = award.check_occured()
 
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given
@@ -32,14 +22,9 @@ def check_award_occured(award, user_id, onlyNew):
         previous_awards = get_award_from_db(award, user_id)
         print "[awardM] previous_awards" + str(previous_awards)
 
-    if activites[0] == award.required_activites:
-        if previous_awards is None:
-            print "[awardM] awarding user!"
-            return True
-        else:
-            print "[awardM] found existing award " + str(previous_awards)
-    else:
-        print "[awardM] not enough new activities" + str(activites)
+    if occured and previous_awards is None:
+        print "[awardM] awarding user!"
+        return True  
     
     return False
 
