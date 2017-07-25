@@ -42,7 +42,7 @@ class ConsistancyAward(StravaAward):
 
         # check if the required no of acvities exist,
         # Also check if the same award has already been given
-        if activites[0] == self.required_activites:
+        if activites[0]['count'] == self.required_activites:
             print "[award] AWARD REQUIREMENTS MET"
             return True
 
