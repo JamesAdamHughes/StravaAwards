@@ -34,7 +34,7 @@ class ConsistancyAward(StravaAward):
                     and start_date < '{1}'
                     and type = {2}
             group by weekNo
-            having count(*) = {3}
+            having count(*) >= {3}
         );
         """.format(self.getStartDate(), self.getEndDate(), self.exerciseType, self.required_activites_per_week)
 

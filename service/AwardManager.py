@@ -94,12 +94,15 @@ def createAwards():
     """
     awards = []
     # todo write this up in json and read from file
-    awards.append(ConsistancyAward('TwiceThisWeekAward', 0, 1, 0, 'You ran twice this week!', 1, 2, 0))
-    awards.append(ConsistancyAward('Once This Week', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
-    awards.append(ConsistancyAward('TwoWeeksInARow', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
-    awards.append(ConsistancyAward('Four times a Month', 0, 0, 1, 'You ran four times this month!', 4, 1, 0))
-    # awards.append(ConsistancyAward('Quadrupal threat', 0, 1, 0, 'You ran four times this month!', 1, 4, 0))
+    awards.append(ConsistancyAward('Double Tap', 0, 1, 0, 'You ran twice this week!', 1, 2, 0))
+    awards.append(ConsistancyAward('Sweet Start', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
+    awards.append(ConsistancyAward('Fortnight Fighter', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
+    awards.append(ConsistancyAward('Monster Month', 0, 4, 0, 'You ran four weeks in a row!', 4, 1, 0))
+    awards.append(ConsistancyAward('Quadrupal threat', 0, 0, 1, 'You ran four times this month!', 4, 1, 0))
+
     awards.append(DistanceAward('Warm up', 0, 1, 0, 'You ran 5k this week!',5000 ,0))
+    awards.append(DistanceAward('Around the Block', 0, 1, 0, 'You ran 10k this week!',10000 ,0))
+    awards.append(DistanceAward('Almost a Half!', 0, 1, 0, 'You ran 15k this week!',20000 ,0))
 
     return awards
 
