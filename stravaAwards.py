@@ -1,4 +1,3 @@
-from stravalib.client import Client
 from pprint import pprint
 import arrow
 from StravaAwards.service import SubscriptionManager
