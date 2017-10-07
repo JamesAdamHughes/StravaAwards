@@ -15,13 +15,14 @@ def check_award_occured(award, user_id, onlyNew):
     if onlyNew:
         previous_awards = get_award_from_db(award, user_id)
         print "[awardM] previous_awards" + str(previous_awards)
+    
+    if previous_awards:
+        print "[awardM] found old rewards, NOT REWARDING" + str(previous_awards)    
+        return False
 
     if occured and previous_awards == []:
         print "[awardM] awarding user!"
         return True
-
-    if previous_awards:
-        print "[awardM] found old rewards, NOT REWARDING" + str(previous_awards)    
 
     return False
 
@@ -88,7 +89,7 @@ def add_award_to_db(user_id, award):
     return
 
 
-def createAwards():
+def create_awards():
     """
     Return a list of strava award types
     """
@@ -112,7 +113,7 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
     Returns true if the award occured
     """
     valid_awards = []
-    for award in createAwards():
+    for award in create_awards():
         # Force set date for testing
         award.set_now(now_date)
 
@@ -127,4 +128,3 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
             save_award(award, user_id)
             print "[awardM] awarding: " + award.getAwardText()
     return valid_awards
-
