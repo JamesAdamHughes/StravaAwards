@@ -1,7 +1,7 @@
 from stravalib.client import Client
 import sqlite3
 import arrow
-from StravaAwards.service import ConfigService
+from StravaAwards.service import ConfigService, DatabaseManager
 from StravaAwards.model.Activity import Activity
 from StravaAwards import definitions
 
@@ -37,54 +37,13 @@ def get_and_save_actvites_from_api(after_date=None):
     [store_activity(a) for a in activites]
     return activites
 
-def fetchAllDb(sql, params=None):
-    c, conn = getDbCCursor()
-
-    if params:
-        c.execute(sql, params)
-    else:
-        c.execute(sql)
-
-    # Get column names
-    names = [description[0] for description in c.description]
-    
-    # Get results from the db
-    # Map each column in the row, to the associated column name
-    results = []
-    for row in c.fetchall():
-        results.append(dict(zip(names, row)))
-   
-    closeConnection(conn)
-
-    return results
-
-def getDbCCursor():
-    conn = sqlite3.connect(DBNAME)
-    c = conn.cursor()
-    return c, conn
-
-def closeConnection(conn):
-    conn.commit()
-    conn.close()
-
-def insertDb(sql, params):
-    c, conn = getDbCCursor()
-
-    if params:
-        c.execute(sql, params)
-    else :
-        c.execute(sql)
-   
-    closeConnection(conn)
-    return
-
 def getAllStoredActivities(afterDate = '2016-0-01'):
     sql = """
     select * 
     from tb_activity;
     """
 
-    return fetchAllDb(sql)
+    return DatabaseManager.fetch_all(sql)
 
 def store_activity(activity):  
     """
@@ -118,6 +77,6 @@ def store_activity(activity):
         activity.distance,
         activity.moving_time
     ]
-    return insertDb(sql, params)
+    return DatabaseManager.insert_db(sql, params)
 
      

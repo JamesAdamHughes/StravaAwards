@@ -43,23 +43,23 @@ def award_list(user_id):
     }
 
     date = request.args.get('date')
-    onlyNew = request.args.get('onlyNew')
+    only_new = request.args.get('onlyNew')
 
     if date is None:
         date = arrow.now().format("YYYY-MM-DD HH:mm:ss")
     
-    if onlyNew is None or onlyNew == 'true':
-        onlyNew = True
-    elif onlyNew == 'false':
-        onlyNew = False
+    if only_new is None or only_new == 'true':
+        only_new = True
+    elif only_new == 'false':
+        only_new = False
     
-    new_awards = AwardManager.get_new_awards_for_user(user_id, date, onlyNew)
+    new_awards = AwardManager.get_new_awards_for_user(user_id, date, only_new)
     for award in new_awards:
         emailUtilities.send_email(award.name, award.getAwardText())
         res["awards"].append(award.serialize())
 
-    res["numberAwards"] = len(res["awards"])
-    res["onlyNew"] = onlyNew
+    res["number_awards"] = len(res["awards"])
+    res["only_new"] = only_new
     res["now_date"] = date
 
     return jsonify(res)
