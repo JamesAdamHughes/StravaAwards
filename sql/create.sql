@@ -26,11 +26,12 @@ CREATE TABLE tb_award (
 CREATE TABLE tb_user (
 	pk_user_id integer PRIMARY KEY,
 	fk_strava_user_id integer not null unique,
-	datetime_created datetimeoffset NOT NULL,
 	email_address text not null,
 	first_name text not null,
 	last_name text not null,
 	gender text,
-	profile_image_url text	
+	access_token text not null,
+	profile_image_url text,
+	datetime_created datetimeoffset NOT NULL
 );
    	

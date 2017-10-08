@@ -42,9 +42,11 @@ def strava_exchange():
         'code' : request.args.get('code')
         })
 
-    print res.text
-
-    return 'User  authed'
+    result = UserManager.add_user(res.json())
+    if result['ok']:
+        return "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
+    else:
+        return "An error occured: {0}".format(result['message'])
 
 
 @stravaRoute.route('/activity/load/<user_id>', methods=['GET'])
