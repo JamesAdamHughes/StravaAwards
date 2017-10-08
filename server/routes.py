@@ -57,7 +57,7 @@ def activity_load(user_id, from_date="2016-01-01"):
     These are also saved to the DB if not already saved
     """
     from_date = str(from_date)
-    acts = ActivityManager.get_and_save_actvites_from_api(from_date)
+    acts = ActivityManager.get_and_save_actvites_from_api(user_id=user_id, after_date=from_date)
     acts = [ activity.serialize() for activity in acts]
     return jsonify(acts)
 

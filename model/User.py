@@ -3,8 +3,8 @@ from StravaAwards.service import DatabaseManager
 
 class User(object):
 
-    def __init__(self, id, email, fname, lname, profile, gender, token):
-        self.user_id = id
+    def __init__(self, strava_id, email, fname, lname, profile, gender, token):
+        self.strava_id = id
         self.email_address = email
         self.f_name = fname
         self.l_name = lname
@@ -39,7 +39,7 @@ class User(object):
             );
         """
 
-        params = [self.user_id, self.email_address, self.f_name, self.l_name, self.gender, self.access_token, self.profile_image_url, arrow.now().format()]
+        params = [self.strava_id, self.email_address, self.f_name, self.l_name, self.gender, self.access_token, self.profile_image_url, arrow.now().format()]
         DatabaseManager.insert_db(sql, params)
             
         return

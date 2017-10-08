@@ -2,8 +2,9 @@ from datetime import datetime, timedelta, tzinfo
 import arrow
 
 class Activity:
-    def __init__ (self, strava_id, name, start_date, type_id, distance, moving_time):
+    def __init__ (self, strava_id, name, user_id, start_date, type_id, distance, moving_time):
         self.fk_strava_activity_id = strava_id
+        self.fk_strava_user_id = user_id
         self.name = name
         self.start_date = start_date
         self.type_id = type_id
@@ -17,6 +18,7 @@ class Activity:
         return {
             "fk_strava_activity_id": self.fk_strava_activity_id,
             "name": self.name,
+            "strava_user_id" : self.fk_strava_user_id,
             "start_date": self.start_date,
             "distance" : self.distance,
             "moving_time": self.moving_time,

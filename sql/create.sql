@@ -5,7 +5,7 @@ drop table tb_user;
 CREATE TABLE tb_activity (
 	pk_activity_id integer PRIAMRY KEY,
 	fk_strava_activity_id integer not null unique,
-	fk_user_id integer not null,
+	fk_strava_user_id integer not null,
 	start_date datetimeoffset NOT NULL,
 	name text not null,
 	type integer not null,
