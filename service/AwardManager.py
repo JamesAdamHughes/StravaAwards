@@ -8,7 +8,7 @@ def check_award_occured(award, user_id, onlyNew):
     Runs the award logic for an award, to test if it has occured
     Currently only works with SQL statements and consistancy awards
     """
-    occured = award.check_occured()
+    occured = award.check_occured(user_id)
 
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given

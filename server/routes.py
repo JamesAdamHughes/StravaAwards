@@ -126,12 +126,14 @@ def stravaCallback():
         }
 
         data_dict = json.loads(request.data)
+        user_id = data_dict['owner_id']
         print "[server] Subscripton: User uploaded activity " + str(data_dict)
 
         # Load the users activity data again
-        ActivityManager.get_and_save_actvites_from_api()
+        ActivityManager.get_and_save_actvites_from_api(user_id)
 
-        new_awards = AwardManager.get_new_awards_for_user(1, 
+        new_awards = AwardManager.get_new_awards_for_user(
+            user_id, 
             arrow.now().replace(hours=-1).format("YYYY-MM-DD HH:mm:ss"))
         
         AwardManager.award_user(1, new_awards)
