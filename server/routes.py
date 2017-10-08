@@ -1,30 +1,15 @@
 import json
 import flask
+import requests
 from flask import jsonify, request
 from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager, UserManager, ConfigService
 import arrow
 
-<<<<<<< HEAD
-from StravaAwards.model.DistanceAward import DistanceAward
-
-
-import sys
-# print sys.path
-# Add the workspace folder path to the sys.path list
-# sys.path.append('/path/to/workspace/')
-
-stravaRoute = flask.Blueprint('simple_page', __name__, template_folder='templates')
-=======
 stravaRoute = flask.Blueprint('strava', __name__)
->>>>>>> inital user routes and classes
 
 @stravaRoute.route('/')
 def hello_world():
     return 'Hello, World! Watch this space for my Strava App web interface!'
-
-@stravaRoute.route('/')
-def index():
-    return 'Index Page'
 
 @stravaRoute.route('/register', methods=['GET'])
 def register():
@@ -33,15 +18,33 @@ def register():
 
     This page starts the authorisation process 
     """
+
+    # Show auth page to user with link to strava auth url
+    # Add app details to auth url
     return flask.render_template('strava/register.html', auth = {
         'client_id' : ConfigService.getConfigVar('strava.client_id'),
         'response_type': 'code',
-        'redirect_uri' : '127.0.0.1:5000/strava/exchange'
+        'redirect_uri' : ConfigService.getConfigVar('hostname') + '/strava/exchange'
     })
 
 @stravaRoute.route('/strava/exchange', methods=['GET'])
 def strava_exchange():
-    print request.args.get('code')
+    """
+    Callback from the user auth call
+
+    Makes a POST to strava to complete the auth process, this also returns user data
+
+    Add this user data to the db TODO add a user subscription
+    """
+    res = requests.post('https://www.strava.com/oauth/token', data = {
+        'client_id': ConfigService.getConfigVar('strava.client_id'),
+        'client_secret' : ConfigService.getConfigVar('strava.client_secret'),
+        'code' : request.args.get('code')
+        })
+
+    print res.text
+
+    return 'User  authed'
 
 
 @stravaRoute.route('/activity/load/<user_id>', methods=['GET'])
