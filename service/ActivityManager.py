@@ -9,8 +9,13 @@ def get_actvites_from_api(user_id, after_date, limit=200):
     """
     Returns a list of user activites created after the after date
     """
-    client = StravaManager.get_strava_client(user_id=user_id)
+
     activites = []
+    client = StravaManager.get_strava_client(user_id=user_id)
+
+    if not client:
+        return []
+
     for activity in client.get_activities(after=after_date, limit=limit):
         activites.append(Activity(activity.id, activity.name, activity.athlete.id, activity.start_date, activity.type, activity.distance.get_num(), activity.moving_time.total_seconds()))
 
