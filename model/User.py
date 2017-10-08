@@ -43,7 +43,3 @@ class User(object):
         DatabaseManager.insert_db(sql, params)
             
         return
-
-
-
-    
