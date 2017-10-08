@@ -1,25 +1,15 @@
-from stravalib.client import Client
-import sqlite3
 import arrow
-from StravaAwards.service import ConfigService, DatabaseManager
+from StravaAwards.service import ConfigService, DatabaseManager, StravaManager
 from StravaAwards.model.Activity import Activity
 from StravaAwards import definitions
 
 DBNAME = definitions.ROOT_DIR +  '/main.db'
 
-# Create a strava Client
-def getStravaClient():
-    client = Client()
-    client.access_token = ConfigService.getConfigVar('strava.access_token')
-    print client.access_token
-
-    return client
-
 def get_actvites_from_api(after_date, limit=200):
     """
     Returns a list of user activites created after the after date
     """
-    client = getStravaClient()
+    client = StravaManager.get_strava_client()
     activites = []
     for activity in client.get_activities(after=after_date, limit=limit):
         activites.append(Activity(activity.id, activity.name, activity.start_date, activity.type, activity.distance.get_num(), activity.moving_time.total_seconds()))
@@ -37,7 +27,7 @@ def get_and_save_actvites_from_api(after_date=None):
     [store_activity(a) for a in activites]
     return activites
 
-def getAllStoredActivities(afterDate = '2016-0-01'):
+def get_all_stored_activities(after_date='2016-0-01'):
     sql = """
     select * 
     from tb_activity;
@@ -45,7 +35,7 @@ def getAllStoredActivities(afterDate = '2016-0-01'):
 
     return DatabaseManager.fetch_all(sql)
 
-def store_activity(activity):  
+def store_activity(activity):
     """
     Save startdate as iso format for consistancy
     """
@@ -79,4 +69,11 @@ def store_activity(activity):
     ]
     return DatabaseManager.insert_db(sql, params)
 
-     
+def award_user(user_id, awards):
+    """
+    Given a user id and a list of awards, 
+    send an email to the user containing all awards they recieved
+    """
+    
+    pass
+
