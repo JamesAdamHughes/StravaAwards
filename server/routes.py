@@ -1,9 +1,10 @@
+import json
 import flask
 from flask import jsonify, request
-from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager
-import json
+from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager, UserManager, ConfigService
 import arrow
 
+<<<<<<< HEAD
 from StravaAwards.model.DistanceAward import DistanceAward
 
 
@@ -13,6 +14,9 @@ import sys
 # sys.path.append('/path/to/workspace/')
 
 stravaRoute = flask.Blueprint('simple_page', __name__, template_folder='templates')
+=======
+stravaRoute = flask.Blueprint('strava', __name__)
+>>>>>>> inital user routes and classes
 
 @stravaRoute.route('/')
 def hello_world():
@@ -21,6 +25,24 @@ def hello_world():
 @stravaRoute.route('/')
 def index():
     return 'Index Page'
+
+@stravaRoute.route('/register', methods=['GET'])
+def register():
+    """
+    Shows a page allowing the user to register to use the site
+
+    This page starts the authorisation process 
+    """
+    return flask.render_template('strava/register.html', auth = {
+        'client_id' : ConfigService.getConfigVar('strava.client_id'),
+        'response_type': 'code',
+        'redirect_uri' : '127.0.0.1:5000/strava/exchange'
+    })
+
+@stravaRoute.route('/strava/exchange', methods=['GET'])
+def strava_exchange():
+    print request.args.get('code')
+
 
 @stravaRoute.route('/activity/load/<user_id>', methods=['GET'])
 @stravaRoute.route('/activity/load/<user_id>/<from_date>', methods=['GET'])
