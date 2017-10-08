@@ -4,6 +4,9 @@ from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, 
 import json
 import arrow
 
+from StravaAwards.model.DistanceAward import DistanceAward
+
+
 import sys
 # print sys.path
 # Add the workspace folder path to the sys.path list
@@ -54,8 +57,12 @@ def award_list(user_id):
         only_new = False
     
     new_awards = AwardManager.get_new_awards_for_user(user_id, date, only_new)
+
+    # Send the user an email of the awards they have recieved
+    if len(new_awards) > 0:
+        AwardManager.award_user(1, new_awards)
+
     for award in new_awards:
-        emailUtilities.send_email(award.name, award.getAwardText())
         res["awards"].append(award.serialize())
 
     res["number_awards"] = len(res["awards"])

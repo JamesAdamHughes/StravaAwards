@@ -1,7 +1,7 @@
 import arrow
 from StravaAwards.model.DistanceAward import DistanceAward
 from StravaAwards.model.ConsistancyAward import ConsistancyAward
-from StravaAwards.service import emailUtilities, DatabaseManager
+from StravaAwards.service import emailUtilities, DatabaseManager, emailUtilities
 
 def check_award_occured(award, user_id, onlyNew):
     """
@@ -95,6 +95,7 @@ def create_awards():
     """
     awards = []
     # todo write this up in json and read from file
+    awards.append(ConsistancyAward('Testing Triplet', 0, 1, 0, 'You ran three times this week!', 1, 3, 0))
     awards.append(ConsistancyAward('Double Tap', 0, 1, 0, 'You ran twice this week!', 1, 2, 0))
     awards.append(ConsistancyAward('Sweet Start', 0, 1, 0, 'You ran once this week!', 1, 1, 0))
     awards.append(ConsistancyAward('Fortnight Fighter', 0, 2, 0, 'You ran two weeks in a row!', 2, 1, 0))
@@ -128,3 +129,22 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
             save_award(award, user_id)
             print "[awardM] awarding: " + award.getAwardText()
     return valid_awards
+
+
+def award_user(user_id, awards):
+    """
+    Given a user id and a list of awards, 
+    send an email to the user containing all awards they recieved
+    """
+
+    award_text_list = "<ul>"
+    for award in awards:
+        print award
+        award_item = "<li>" + award.name + ". " + award.message + "</li>"
+        award_text_list += award_item
+
+    award_text_list += "</ul>"
+
+    emailUtilities.send_email('', award_text_list)
+
+    return

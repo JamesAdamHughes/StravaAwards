@@ -1,5 +1,5 @@
 import arrow
-from StravaAwards.service import ConfigService, DatabaseManager, StravaManager
+from StravaAwards.service import DatabaseManager, StravaManager
 from StravaAwards.model.Activity import Activity
 from StravaAwards import definitions
 
@@ -68,12 +68,4 @@ def store_activity(activity):
         activity.moving_time
     ]
     return DatabaseManager.insert_db(sql, params)
-
-def award_user(user_id, awards):
-    """
-    Given a user id and a list of awards, 
-    send an email to the user containing all awards they recieved
-    """
-    
-    pass
 

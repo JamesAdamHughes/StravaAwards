@@ -16,23 +16,24 @@ Thanks,
 Your StravaAwards Team
 """
 
-def send_email(subject='test', body='body', receivers=['jahughes112@gmail.com' ,'test@allaboutspam.com'], sender='noreply@jameshughes.info', test=TESTING):
+def send_email(subject='', body='body', receivers=['jahughes112@gmail.com' ,'test@allaboutspam.com'], sender='noreply@jameshughes.info', test=TESTING):
     """ Send an email """
 
     enviroment = os.getenv('ENVIROMENT')
 
     print "[emailU] sending email..."
 
+    email = emailTemplate.format(subject, body, receivers[0])
+    
     if enviroment == 'development':
         #don't send email during testing
         print "[emailU] Email disabled for test"
+        print email            
         return "[emailU] Email disabled for test"
-
-    smtpserver = get_email_server()
-    email = emailTemplate.format(subject, body, receivers[0])
 
     # Try sending the email
     try:
+        smtpserver = get_email_server()        
         smtpserver.sendmail(sender, receivers, email)
         print "[emailU] Successfully sent email"
     except smtplib.SMTPException:
