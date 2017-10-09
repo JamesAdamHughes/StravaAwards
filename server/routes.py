@@ -133,8 +133,10 @@ def stravaCallback():
 
         new_awards = AwardManager.get_new_awards_for_user(1, 
             arrow.now().replace(hours=-1).format("YYYY-MM-DD HH:mm:ss"))
+        
+        AwardManager.award_user(1, new_awards)
+        
         for award in new_awards:            
-            emailUtilities.send_email(award.name, award.getAwardText())
             res["awards"].append(award.serialize())
         
         res["numberAwards"] = len(res["awards"])
