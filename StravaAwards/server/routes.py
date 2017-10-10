@@ -1,3 +1,5 @@
+import os
+print os.getcwd()
 import json
 import flask
 import requests
@@ -5,10 +7,11 @@ from flask import jsonify, request
 from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager, UserManager, ConfigService
 import arrow
 
-stravaRoute = flask.Blueprint('strava', __name__)
+stravaRoute = flask.Blueprint('strava', __name__, template_folder='templates')
 
 @stravaRoute.route('/')
 def hello_world():
+    print 'index'
     return 'Hello, World! Watch this space for my Strava App web interface!'
 
 @stravaRoute.route('/register', methods=['GET'])
@@ -18,7 +21,7 @@ def register():
 
     This page starts the authorisation process 
     """
-
+    print '/register'
     # Show auth page to user with link to strava auth url
     # Add app details to auth url
     return flask.render_template('strava/register.html', auth = {
@@ -36,15 +39,19 @@ def strava_exchange():
 
     Add this user data to the db TODO add a user subscription
     """
-    res = requests.post('https://www.strava.com/oauth/token', data = {
+
+    res = requests.post('https://www.strava.com/oauth/token', data={
         'client_id': ConfigService.getConfigVar('strava.client_id'),
         'client_secret' : ConfigService.getConfigVar('strava.client_secret'),
         'code' : request.args.get('code')
         })
+    
+    result = UserManager.add_user(res.json())  
+    
 
-    result = UserManager.add_user(res.json())
     if result['ok']:
-        return "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
+        return flask.redirect('/strava/subscribe/' + str(result['user'].strava_id))
+        # return "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
     else:
         return "An error occured: {0}".format(result['message'])
 
@@ -147,20 +154,16 @@ def stravaCallback():
 
 @stravaRoute.route('/authorized', methods=['GET', 'POST'])
 def authorized():
-
+    print 'authorized'
     code = request.values.get('code')
 
     print "code: " , code
 
-    # print "access Token: " + str(access_token)
-
-    # return 'Authorised: ' + str(access_token)
-
 @stravaRoute.route('/strava/subscribe/<user_id>', methods=['GET'])
 def subscribe_user(user_id):    
-
+    print '/strava/subscribe'
     print '[server] subscribing to user events'
-    SubscriptionManager.subscribe()
+    SubscriptionManager.subscribe(user_id)
     print '[server] done subscription'
 
     return jsonify({

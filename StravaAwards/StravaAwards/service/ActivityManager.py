@@ -1,9 +1,6 @@
 import arrow
-from StravaAwards.service import DatabaseManager, StravaManager
-from StravaAwards.model.Activity import Activity
-from StravaAwards import definitions
-
-DBNAME = definitions.ROOT_DIR +  '/main.db'
+from  service import DatabaseManager, StravaManager
+from  model.Activity import Activity
 
 def get_actvites_from_api(user_id, after_date, limit=200):
     """
