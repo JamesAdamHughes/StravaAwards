@@ -109,10 +109,11 @@ def create_awards():
     return awards
 
 def get_new_awards_for_user(user_id, now_date, onlyNew=True):
-    """
-    Takes an award type, applies it to the activites data
+    ''' Takes an award type, applies it to the activites data
     Returns true if the award occured
-    """
+
+    :param user_id: int ID of user to be rewarded
+    '''
     valid_awards = []
     for award in create_awards():
         # Force set date for testing
@@ -132,10 +133,9 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
 
 
 def award_user(user_id, awards):
-    """
-    Given a user id and a list of awards, 
+    ''' Given a user id and a list of awards, 
     send an email to the user containing all awards they recieved
-    """
+    '''
 
     award_text_list = "<ul>"
     for award in awards:

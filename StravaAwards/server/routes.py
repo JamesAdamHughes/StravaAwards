@@ -47,13 +47,23 @@ def strava_exchange():
         })
     
     result = UserManager.add_user(res.json())  
-    
+    response = {
+        'message': ''
+    }
 
     if result['ok']:
-        return flask.redirect('/strava/subscribe/' + str(result['user'].strava_id))
-        # return "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
+        try:
+            # If we have added the user, then subscribe them to webhook events
+            subscribe_user(str(result['user'].strava_id))
+            
+            response['user'] = result['user'].__dict__
+            response['message'] = "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
+        except Exception:
+            response['message'] = "An error occured: subscribing to activity events"
     else:
-        return "An error occured: {0}".format(result['message'])
+        response['message'] = "An error occured: {0}".format(result['message'])
+    
+    return jsonify(response)
 
 
 @stravaRoute.route('/activity/load/<user_id>', methods=['GET'])
@@ -65,7 +75,10 @@ def activity_load(user_id, from_date="2016-01-01"):
     """
     from_date = str(from_date)
     acts = ActivityManager.get_and_save_actvites_from_api(user_id=user_id, after_date=from_date)
-    acts = [ activity.serialize() for activity in acts]
+    
+    if acts:
+        acts = [ activity.serialize() for activity in acts]
+    
     return jsonify(acts)
 
 @stravaRoute.route('/award/list/<user_id>', methods=['GET'])
