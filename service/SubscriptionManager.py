@@ -2,23 +2,28 @@ from stravalib.client import Client
 from StravaAwards.service import ConfigService
 import os
 import json
+from flask import current_app
 
-def subscribe():
+def subscribe(user_token):
     print '[subscribeM] doing subscription...'
 
     client = Client()
-    callbackUrl = getPublicUrl() + '/strava/callback'
-    client_secret = ConfigService.getConfigVar('strava.client_secret')
-    client_id = ConfigService.getConfigVar('strava.client_id')
-    print "callback url: " + callbackUrl
-    print client.create_subscription(client_id=client_id, client_secret=client_secret, callback_url=callbackUrl)
+    callback_url = getPublicUrl() + '/strava/callback'
+    current_app.logger.info('current app:' + callback_url)
+    current_app.logger.info('user token:' + user_token)
+    print client.create_subscription(
+        client_id=ConfigService.getConfigVar('strava.client_id'),
+        client_secret=ConfigService.getConfigVar('strava.client_secret'),
+        callback_url=callback_url
+    )
+
     return
  
 def getPublicUrl():
     enviroment = os.getenv('ENVIROMENT')
     print enviroment
     if enviroment == 'development':
-        a = os.popen("curl  http://localhost:4041/api/tunnels > tunnels.json").read()  
+        a = os.popen("curl  http://localhost:4040/api/tunnels > tunnels.json").read()  
 
         with open('tunnels.json') as data_file:    
             datajson = json.load(data_file)
@@ -27,4 +32,4 @@ def getPublicUrl():
 
         return public_url
     else:
-        return 'http://' + ConfigService.getConfigVar('hostname')
+        return ConfigService.getConfigVar('hostname')

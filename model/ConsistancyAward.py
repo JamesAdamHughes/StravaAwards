@@ -20,7 +20,7 @@ class ConsistancyAward(StravaAward):
         return obj
 
 
-    def check_occured(self):
+    def check_occured(self, strava_user_id):
         """
         Defines the logic that controls if this award is run
         """
@@ -30,15 +30,17 @@ class ConsistancyAward(StravaAward):
             select strftime('%W', start_date) weekNo, count(*)
             from tb_activity
                 where 1=1
-                    and start_date > '{0}'
-                    and start_date < '{1}'
-                    and type = {2}
+                    and start_date > ?
+                    and start_date < ?
+                    and type = ?
+                    and fk_strava_user_id = ?
             group by weekNo
-            having count(*) >= {3}
+            having count(*) >= ?
         );
-        """.format(self.getStartDate(), self.getEndDate(), self.exerciseType, self.required_activites_per_week)
+        """
+        params = [self.getStartDate(), self.getEndDate(), self.exerciseType, strava_user_id, self.required_activites_per_week]
 
-        activites = DatabaseManager.fetch_one(sql)
+        activites = DatabaseManager.fetch_one(sql, params)
 
         # check if the required no of acvities exist,
         # Also check if the same award has already been given

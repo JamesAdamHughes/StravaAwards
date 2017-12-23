@@ -18,7 +18,7 @@ class DistanceAward(StravaAward):
 
         return obj
 
-    def check_occured(self):
+    def check_occured(self, strava_user_id):
         """
         Defines the logic that controls if this award is run
         """
@@ -30,9 +30,10 @@ class DistanceAward(StravaAward):
             and start_date > ?
             and start_date < ?
             and type = ?
+            and fk_strava_user_id = ?
         """
 
-        params = [self.getStartDate(), self.getEndDate(), self.exerciseType]
+        params = [self.getStartDate(), self.getEndDate(), self.exerciseType, strava_user_id]
         result = DatabaseManager.fetch_one(sql, params)
 
         if result[0]['total_distance'] >= self.required_distance:

@@ -1,30 +1,35 @@
 import arrow
 from StravaAwards.service import DatabaseManager, StravaManager
 from StravaAwards.model.Activity import Activity
-from StravaAwards import definitions
 
-DBNAME = definitions.ROOT_DIR +  '/main.db'
-
-def get_actvites_from_api(after_date, limit=200):
+def get_actvites_from_api(user_id, after_date, limit=200):
     """
     Returns a list of user activites created after the after date
     """
-    client = StravaManager.get_strava_client()
+
     activites = []
+    client = StravaManager.get_strava_client(user_id=user_id)
+
+    if not client:
+        return False
+
     for activity in client.get_activities(after=after_date, limit=limit):
-        activites.append(Activity(activity.id, activity.name, activity.start_date, activity.type, activity.distance.get_num(), activity.moving_time.total_seconds()))
+        activites.append(Activity(activity.id, activity.name, activity.athlete.id, activity.start_date, activity.type, activity.distance.get_num(), activity.moving_time.total_seconds()))
 
     return activites
 
-def get_and_save_actvites_from_api(after_date=None):
+def get_and_save_actvites_from_api(user_id, after_date=None):
     if after_date is None:
         after_date = arrow.now().replace(years=-1).format("YYYY-MM-DD")
     
     print "[activityM] after_date: " + after_date
 
-    activites = get_actvites_from_api(str(after_date))
-    print "[activityM] got this many activites: " + str(len(activites))
-    [store_activity(a) for a in activites]
+    activites = get_actvites_from_api(user_id, str(after_date))
+
+    if activites and len(activites) > 0:
+        print "[activityM] got this many activites: " + str(len(activites))
+        [store_activity(a) for a in activites]
+    
     return activites
 
 def get_all_stored_activities(after_date='2016-0-01'):
@@ -45,6 +50,7 @@ def store_activity(activity):
     sql = """
         insert or ignore into tb_activity (
             fk_strava_activity_id,
+            fk_strava_user_id,
             start_date,
             name,
             type,
@@ -56,11 +62,13 @@ def store_activity(activity):
             ?,
             ?,
             ?,
+            ?,
             ?
         );
     """
     params = [
         activity.fk_strava_activity_id,
+        activity.fk_strava_user_id,
         start_date.format(),
         activity.name,
         activity.get_activity_type(),

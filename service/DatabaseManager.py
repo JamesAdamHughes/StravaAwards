@@ -2,7 +2,6 @@ from StravaAwards import definitions
 import sqlite3
 
 DBNAME = definitions.ROOT_DIR +  '/main.db'
-print '[activityM] root dir: ' + DBNAME
 
 def get_db_ccursor():
     conn = sqlite3.connect(DBNAME)

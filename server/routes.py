@@ -1,14 +1,17 @@
+import os
 import json
 import flask
 import requests
-from flask import jsonify, request
+from flask import jsonify, request, current_app
 from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager, UserManager, ConfigService
 import arrow
+import logging
 
-stravaRoute = flask.Blueprint('strava', __name__)
+stravaRoute = flask.Blueprint('strava', __name__, template_folder='templates')
 
 @stravaRoute.route('/')
 def hello_world():
+    print 'index'
     return 'Hello, World! Watch this space for my Strava App web interface!'
 
 @stravaRoute.route('/register', methods=['GET'])
@@ -18,9 +21,14 @@ def register():
 
     This page starts the authorisation process 
     """
-
+    print '/register'
     # Show auth page to user with link to strava auth url
     # Add app details to auth url
+    current_app.logger.info('Log message')
+
+    current_app.logger.debug('Log message')
+    current_app.logger.warn('Log message')
+
     return flask.render_template('strava/register.html', auth = {
         'client_id' : ConfigService.getConfigVar('strava.client_id'),
         'response_type': 'code',
@@ -34,19 +42,37 @@ def strava_exchange():
 
     Makes a POST to strava to complete the auth process, this also returns user data
 
-    Add this user data to the db TODO add a user subscription
+    Add this user data to the db
     """
-    res = requests.post('https://www.strava.com/oauth/token', data = {
+
+    current_app.logger.info(request.args.get('code'))
+
+    res = requests.post('https://www.strava.com/oauth/token', data={
         'client_id': ConfigService.getConfigVar('strava.client_id'),
         'client_secret' : ConfigService.getConfigVar('strava.client_secret'),
         'code' : request.args.get('code')
         })
+    
+    result = UserManager.add_user(res.json())  
+    response = {
+        'message': ''
+    }
 
-    result = UserManager.add_user(res.json())
+    current_app.logger.info('got this far looool')
+
     if result['ok']:
-        return "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
+        try:
+            # If we have added the user, then subscribe them to webhook events
+            subscribe_user(str(result['user'].strava_id))
+            
+            response['user'] = result['user'].__dict__
+            response['message'] = "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
+        except Exception:
+            response['message'] = "An error occured: subscribing to activity events"
     else:
-        return "An error occured: {0}".format(result['message'])
+        response['message'] = "An error occured: {0}".format(result['message'])
+    
+    return jsonify(response)
 
 
 @stravaRoute.route('/activity/load/<user_id>', methods=['GET'])
@@ -57,8 +83,11 @@ def activity_load(user_id, from_date="2016-01-01"):
     These are also saved to the DB if not already saved
     """
     from_date = str(from_date)
-    acts = ActivityManager.get_and_save_actvites_from_api(from_date)
-    acts = [ activity.serialize() for activity in acts]
+    acts = ActivityManager.get_and_save_actvites_from_api(user_id=user_id, after_date=from_date)
+    
+    if acts:
+        acts = [ activity.serialize() for activity in acts]
+    
     return jsonify(acts)
 
 @stravaRoute.route('/award/list/<user_id>', methods=['GET'])
@@ -126,12 +155,14 @@ def stravaCallback():
         }
 
         data_dict = json.loads(request.data)
+        user_id = data_dict['owner_id']
         print "[server] Subscripton: User uploaded activity " + str(data_dict)
 
         # Load the users activity data again
-        ActivityManager.get_and_save_actvites_from_api()
+        ActivityManager.get_and_save_actvites_from_api(user_id)
 
-        new_awards = AwardManager.get_new_awards_for_user(1, 
+        new_awards = AwardManager.get_new_awards_for_user(
+            user_id, 
             arrow.now().replace(hours=-1).format("YYYY-MM-DD HH:mm:ss"))
         
         AwardManager.award_user(1, new_awards)
@@ -145,20 +176,16 @@ def stravaCallback():
 
 @stravaRoute.route('/authorized', methods=['GET', 'POST'])
 def authorized():
-
+    print 'authorized'
     code = request.values.get('code')
 
     print "code: " , code
 
-    # print "access Token: " + str(access_token)
-
-    # return 'Authorised: ' + str(access_token)
-
 @stravaRoute.route('/strava/subscribe/<user_id>', methods=['GET'])
 def subscribe_user(user_id):    
-
+    print '/strava/subscribe'
     print '[server] subscribing to user events'
-    SubscriptionManager.subscribe()
+    SubscriptionManager.subscribe(user_id)
     print '[server] done subscription'
 
     return jsonify({
