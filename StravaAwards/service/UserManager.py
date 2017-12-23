@@ -20,10 +20,10 @@ def add_user(json_res):
     else:
         # create user object and save
         user = User(athlete["id"], athlete["email"], athlete["firstname"], athlete["lastname"], athlete["profile"], athlete["sex"], json_res["access_token"])
-        # save_user(user)
+        save_user(user)
 
         #subscribe user to events
-        # SubscriptionManager.subscribe(user.access_token)
+        SubscriptionManager.subscribe(user.access_token)
         
         result['ok'] = True
         result['message'] = 'User added successfully'
