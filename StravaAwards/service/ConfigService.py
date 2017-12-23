@@ -4,6 +4,8 @@ config = ConfigParser.RawConfigParser()
 
 def read(path):
     print "reading config..." + path
+    enviroment = os.getenv('ENVIROMENT')
+    print '[config] loading enviroment ' + str(enviroment)
     print config.read(path)
 
 def getConfigVar(value, section='development'):
