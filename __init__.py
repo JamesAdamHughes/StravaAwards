@@ -5,6 +5,7 @@ print '[init] starting application'
 app = Flask(__name__)
 
 print '[init] after flask setip'
+
 from server.routes import stravaRoute
 from  server.CustomJSONEncoder import CustomJSONEncoder
 from  service import ConfigService
