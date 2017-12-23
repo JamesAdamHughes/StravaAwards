@@ -45,6 +45,8 @@ def strava_exchange():
     Add this user data to the db
     """
 
+    current_app.logger.info(request.args.get('code'))
+
     res = requests.post('https://www.strava.com/oauth/token', data={
         'client_id': ConfigService.getConfigVar('strava.client_id'),
         'client_secret' : ConfigService.getConfigVar('strava.client_secret'),
@@ -55,6 +57,8 @@ def strava_exchange():
     response = {
         'message': ''
     }
+
+    current_app.logger.info('got this far looool')
 
     if result['ok']:
         try:

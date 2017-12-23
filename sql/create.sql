@@ -1,6 +1,6 @@
-drop table tb_activity;
-drop table tb_award;
-drop table tb_user;
+--drop table tb_activity;
+--drop table tb_award;
+--drop table tb_user;
 
 CREATE TABLE tb_activity (
 	pk_activity_id integer PRIAMRY KEY,
