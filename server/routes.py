@@ -1,11 +1,11 @@
 import os
-print os.getcwd()
 import json
 import flask
 import requests
-from flask import jsonify, request
+from flask import jsonify, request, current_app
 from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager, UserManager, ConfigService
 import arrow
+import logging
 
 stravaRoute = flask.Blueprint('strava', __name__, template_folder='templates')
 
@@ -24,6 +24,11 @@ def register():
     print '/register'
     # Show auth page to user with link to strava auth url
     # Add app details to auth url
+    current_app.logger.info('Log message')
+
+    current_app.logger.debug('Log message')
+    current_app.logger.warn('Log message')
+
     return flask.render_template('strava/register.html', auth = {
         'client_id' : ConfigService.getConfigVar('strava.client_id'),
         'response_type': 'code',

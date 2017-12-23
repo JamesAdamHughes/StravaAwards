@@ -10,9 +10,19 @@ from server.routes import stravaRoute
 from  server.CustomJSONEncoder import CustomJSONEncoder
 from  service import ConfigService
 import definitions
+import logging
 
 app.json_encoder = CustomJSONEncoder
 app.register_blueprint(stravaRoute)
+
+gunicorn_error_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers.extend(gunicorn_error_logger.handlers)
+app.logger.setLevel(logging.INFO)
+
+app.logger.info('Log message')
+
+app.logger.debug('Log message')
+app.logger.warn('Log message')
 
 #Load the config file for the enviroment
 ConfigService.read(definitions.ROOT_DIR + '/config.cfg')
