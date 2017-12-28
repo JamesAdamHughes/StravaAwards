@@ -1,17 +1,17 @@
+import logging
 from flask import Flask, request
+from StravaAwards.server.middleware import middleware
+from StravaAwards.server.routes import stravaRoute
+from  StravaAwards.server.CustomJSONEncoder import CustomJSONEncoder
+from  StravaAwards.service import ConfigService
+import StravaAwards.definitions
 
 print '[init] starting application'
 
 app = Flask(__name__)
+app.wsgi_app = middleware.LoggingMiddleware(app.wsgi_app)
 
 app.logger.info('[init] after flask setup')
-
-from server.routes import stravaRoute
-from  server.CustomJSONEncoder import CustomJSONEncoder
-from  service import ConfigService
-import definitions
-import logging
-
 app.json_encoder = CustomJSONEncoder
 app.register_blueprint(stravaRoute)
 
@@ -21,7 +21,7 @@ app.logger.setLevel(logging.INFO)
 
 
 #Load the config file for the enviroment
-ConfigService.read(definitions.ROOT_DIR + '/config.cfg')
+ConfigService.read(StravaAwards.definitions.ROOT_DIR + '/config.cfg')
 
 
 if __name__ == "__main__":

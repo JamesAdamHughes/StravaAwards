@@ -7,6 +7,9 @@ import arrow
 
 stravaRoute = flask.Blueprint('strava', __name__, template_folder='templates')
 
+trueisms = ('true', '1', 'True')
+falseism = ('false', '0', 'False')
+
 @stravaRoute.route('/')
 def hello_world():
     current_app.logger.info( 'index')
@@ -19,7 +22,6 @@ def register():
 
     This page starts the authorisation process
     """
-    current_app.logger.info( '/register')
     # Show auth page to user with link to strava auth url
     # Add app details to auth url
 
@@ -39,7 +41,7 @@ def strava_exchange():
     Add this user data to the db TODO redirect user to home page and set cookie
     """
 
-    current_app.logger.info(request.args.get('code'))
+    current_app.logger.info("Got following code: " + request.args.get('code'))
 
     res = requests.post('https://www.strava.com/oauth/token', data={
         'client_id': ConfigService.getConfigVar('strava.client_id'),
@@ -97,20 +99,27 @@ def award_list(user_id):
 
     date = request.args.get('date')
     only_new = request.args.get('onlyNew')
+    email = request.args.get('email')
 
+    # Check extra params to modify the behaviour of call
     if date is None:
         date = arrow.now().format("YYYY-MM-DD HH:mm:ss")
-    
-    if only_new is None or only_new == 'true':
+
+    if email is None or email in trueisms:
+        email = True
+    elif email in falseism:
+        email = False
+
+    if only_new is None or only_new in trueisms:
         only_new = True
-    elif only_new == 'false':
+    elif only_new in falseism:
         only_new = False
     
     new_awards = AwardManager.get_new_awards_for_user(user_id, date, only_new)
     email_sent = False
 
     # Send the user an email of the awards they have recieved
-    if len(new_awards) > 0:
+    if len(new_awards) > 0 and email:
         email_sent = AwardManager.award_user(user_id, new_awards)
 
     for award in new_awards:

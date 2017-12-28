@@ -11,6 +11,7 @@ def subscribe(user_token):
     callback_url = getPublicUrl() + '/strava/callback'
     current_app.logger.info('current app:' + callback_url)
     current_app.logger.info('user token:' + user_token)
+    
     print client.create_subscription(
         client_id=ConfigService.getConfigVar('strava.client_id'),
         client_secret=ConfigService.getConfigVar('strava.client_secret'),

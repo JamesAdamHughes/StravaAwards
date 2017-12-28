@@ -1,4 +1,5 @@
 import arrow
+from flask import current_app
 from StravaAwards.model.DistanceAward import DistanceAward
 from StravaAwards.model.ConsistancyAward import ConsistancyAward
 from StravaAwards.service import emailUtilities, DatabaseManager, UserManager 
@@ -13,14 +14,14 @@ def check_award_occured(award, user_id, onlyNew):
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given
     previous_awards = get_award_from_db(award, user_id)
-    print "[awardM] previous_awards" + str(previous_awards)
+    log("previous_awards" + str(previous_awards))
     
     if previous_awards and onlyNew:
-        print "[awardM] found old rewards, NOT REWARDING" + str(previous_awards)    
+        log("found old rewards, NOT REWARDING" + str(previous_awards)) 
         return False
 
     if occured and (previous_awards == [] or not onlyNew):
-        print "[awardM] awarding user!"
+        log("awarding user!")
         return True
 
     return False
@@ -46,16 +47,16 @@ def get_award_from_db(award, user_id):
     params = [award.getStartDate(), award.getEndDate(), award.getAwardType(), user_id, award.name]
     result = DatabaseManager.fetch_one(sql, params)
 
-    print "[awardM] fetched award: " + str(result)
+    log("fetched award: " + str(result))
 
     return result
 
 
 def save_award(award, user_id):
     """
-    Takes an award and saves ti to the db
+    Takes an award and saves to to the db
     """
-    print "[awardM] saving award: " + str(award.name)
+    log("saving award: " + str(award.name))
     return add_award_to_db(user_id, award)
 
 
@@ -118,8 +119,7 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
         # Force set date for testing
         award.set_now(now_date)
 
-        print "[awardM] Checking " + award.name + " from " + arrow.get(award.getStartDate()).humanize()
-        print "[awardM] date range is: " + award.getStartDate() + " to " + award.getEndDate()
+        log("Checking " + award.name + " date range is: " + award.getStartDate() + " to " + award.getEndDate())
 
         # Check if the award happened
         occured = check_award_occured(award, user_id, onlyNew)
@@ -127,7 +127,7 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
             # save award to db
             valid_awards.append(award)
             save_award(award, user_id)
-            print "[awardM] awarding: " + award.getAwardText()
+            log("awarding: " + award.getAwardText())
     return valid_awards
 
 
@@ -145,7 +145,7 @@ def award_user(user_id, awards):
 
     award_text_list = "<ul>"
     for award in awards:
-        print award
+        log(award.name)
         award_item = "<li>" + award.get_html_template() + "</li>"
         award_text_list += award_item
 
@@ -154,3 +154,6 @@ def award_user(user_id, awards):
     sent = emailUtilities.send_email(subject, award_text_list)
 
     return sent
+
+def log(text):
+    current_app.logger.info("[awardManager]: " + str(text))
