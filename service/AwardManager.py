@@ -4,29 +4,6 @@ from StravaAwards.model.DistanceAward import DistanceAward
 from StravaAwards.model.ConsistancyAward import ConsistancyAward
 from StravaAwards.service import emailUtilities, DatabaseManager, UserManager 
 
-def check_award_occured(award, user_id, onlyNew):
-    """
-    Runs the award logic for an award, to test if it has occured
-    Currently only works with SQL statements and consistancy awards
-    """
-    occured = award.check_occured(user_id)
-
-    # check if the required no of acvities exist, 
-    # Also check if the same award has already been given
-    previous_awards = get_award_from_db(award, user_id)
-    log("previous_awards" + str(previous_awards))
-    
-    if previous_awards and onlyNew:
-        log("found old rewards, NOT REWARDING" + str(previous_awards)) 
-        return False
-
-    if occured and (previous_awards == [] or not onlyNew):
-        log("awarding user!")
-        return True
-
-    return False
-
-
 def get_award_from_db(award, user_id):
     """
     Returns an award from the database, using the start end and type as a unique identifier
@@ -120,12 +97,25 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
         log("Checking " + award.name + " date range is: " + award.getStartDate() + " to " + award.getEndDate())
 
         # Check if the award happened
-        occured = check_award_occured(award, user_id, onlyNew)
-        if occured:
+        occured = award.check_occured(user_id)
+
+        #check if we have already given the award out (already met conditions once)
+        previous_awards = get_award_from_db(award, user_id)
+        log("previous_awards" + str(previous_awards))
+        
+        if previous_awards and onlyNew:
+            # already given award and are only looking for new ones
+            log("found old rewards, NOT REWARDING" + str(previous_awards)) 
+
+        elif occured and (previous_awards == [] or not onlyNew):
+            # award conditions met and we haven't given before or forcing new
+            log("awarding: " + award.getAwardText())
+
             # save award to db
             valid_awards.append(award)
             save_award(award, user_id)
             log("awarding: " + award.getAwardText())
+
     return valid_awards
 
 
