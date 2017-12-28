@@ -11,7 +11,7 @@ emailTemplate = """
 
 {1}
 
-Way to go you, keep it up!<br/><br/>
+Way to go, keep it up!<br/><br/>
 
 Thanks,<br/>
 Your StravaAwards Team

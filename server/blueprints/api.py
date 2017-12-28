@@ -1,78 +1,15 @@
-import json
 import flask
+import arrow
+import json
 import requests
 from flask import jsonify, request, current_app
-from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager, UserManager, ConfigService
-import arrow
+from StravaAwards.service import ActivityManager, AwardManager, SubscriptionManager, emailUtilities, ConfigService, UserManager
+from StravaAwards.definitions import trueisms, falseism
 
-stravaRoute = flask.Blueprint('strava', __name__, template_folder='templates')
+apiRoutes = flask.Blueprint('api', __name__)
 
-trueisms = ('true', '1', 'True')
-falseism = ('false', '0', 'False')
-
-@stravaRoute.route('/')
-def hello_world():
-    current_app.logger.info( 'index')
-    return 'Hello, World! Watch this space for my Strava App web interface!'
-
-@stravaRoute.route('/register', methods=['GET'])
-def register():
-    """
-    Shows a page allowing the user to register to use the site
-
-    This page starts the authorisation process
-    """
-    # Show auth page to user with link to strava auth url
-    # Add app details to auth url
-
-    return flask.render_template('strava/register.html', auth = {
-        'client_id' : ConfigService.getConfigVar('strava.client_id'),
-        'response_type': 'code',
-        'redirect_uri' : ConfigService.getConfigVar('hostname') + '/strava/exchange'
-    })
-
-@stravaRoute.route('/strava/exchange', methods=['GET'])
-def strava_exchange():
-    """
-    Callback from the user auth call
-
-    Makes a POST to strava to complete the auth process, this also returns user data
-
-    Add this user data to the db TODO redirect user to home page and set cookie
-    """
-
-    current_app.logger.info("Got following code: " + request.args.get('code'))
-
-    res = requests.post('https://www.strava.com/oauth/token', data={
-        'client_id': ConfigService.getConfigVar('strava.client_id'),
-        'client_secret' : ConfigService.getConfigVar('strava.client_secret'),
-        'code' : request.args.get('code')
-        })
-    
-    result = UserManager.add_user(res.json())  
-    response = {
-        'message': ''
-    }
-
-    current_app.logger.info('got this far looool')
-
-    if result['ok']:
-        try:
-            # If we have added the user, then subscribe them to webhook events
-            subscribe_user(str(result['user'].strava_id))
-            
-            response['user'] = result['user'].__dict__
-            response['message'] = "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
-        except Exception:
-            response['message'] = "An error occured: subscribing to activity events"
-    else:
-        response['message'] = "An error occured: {0}".format(result['message'])
-    
-    return jsonify(response)
-
-
-@stravaRoute.route('/activity/load/<user_id>', methods=['GET'])
-@stravaRoute.route('/activity/load/<user_id>/<from_date>', methods=['GET'])
+@apiRoutes.route('/activity/load/<user_id>', methods=['GET'])
+@apiRoutes.route('/activity/load/<user_id>/<from_date>', methods=['GET'])
 def activity_load(user_id, from_date="2016-01-01"):
     """
     Returns a list of all a users activites from the from date
@@ -86,7 +23,7 @@ def activity_load(user_id, from_date="2016-01-01"):
     
     return jsonify(acts)
 
-@stravaRoute.route('/award/list/<user_id>', methods=['GET'])
+@apiRoutes.route('/award/list/<user_id>', methods=['GET'])
 def award_list(user_id):
     """
     Returns a JSON of all awards a user has won on a given date
@@ -132,7 +69,46 @@ def award_list(user_id):
 
     return jsonify(res)
 
-@stravaRoute.route('/strava/callback', methods=['POST', 'GET'])
+@apiRoutes.route('/strava/exchange', methods=['GET'])
+def strava_exchange():
+    """
+    Callback from the user auth call
+    Makes a POST to strava to complete the auth process, this also returns user data
+    Add this user data to the db TODO redirect user to home page and set cookie
+    """
+
+    current_app.logger.info("Got following code: " + request.args.get('code'))
+
+    res = requests.post('https://www.strava.com/oauth/token', data={
+        'client_id': ConfigService.getConfigVar('strava.client_id'),
+        'client_secret' : ConfigService.getConfigVar('strava.client_secret'),
+        'code' : request.args.get('code')
+        })
+    
+    result = UserManager.add_user(res.json())  
+    response = {
+        'message': '',
+        'ok': result['ok']
+    }
+
+    current_app.logger.info('Added user - got this response: ' + str(result))
+
+    if result['ok']:
+        try:
+            # If we have added the user, then subscribe them to webhook events
+            subscribe_user(str(result['user'].strava_id))
+            
+            response['user'] = result['user'].__dict__
+            response['message'] = "Thanks {0}, we've now authed your account. Now get out there running!".format(result['user'].f_name)
+        except Exception:
+            response['message'] = "An error occured: subscribing to activity events"
+    else:
+        response['message'] = "An error occured: {0}".format(result['message'])
+    
+    return jsonify(response)
+
+
+@apiRoutes.route('/strava/callback', methods=['POST', 'GET'])
 def stravaCallback():
     """
     Endpoint handles strava subscriptions
@@ -179,14 +155,14 @@ def stravaCallback():
         
     return jsonify(res)
 
-@stravaRoute.route('/authorized', methods=['GET', 'POST'])
+@apiRoutes.route('/authorized', methods=['GET', 'POST'])
 def authorized():
     current_app.logger.info('authorized')
     code = request.values.get('code')
 
     current_app.logger.info("code: " + code)
 
-@stravaRoute.route('/strava/subscribe/<user_id>', methods=['GET'])
+@apiRoutes.route('/strava/subscribe/<user_id>', methods=['GET'])
 def subscribe_user(user_id):    
     current_app.logger.info('/strava/subscribe')
     current_app.logger.info('[server] subscribing to user events')
@@ -199,7 +175,7 @@ def subscribe_user(user_id):
     })
     
 
-@stravaRoute.route('/mail', methods=['GET'])
+@apiRoutes.route('/mail', methods=['GET'])
 def mail():
     current_app.logger.info('[routes] sending mail endpoint')
 
