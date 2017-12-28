@@ -71,6 +71,15 @@ class StravaAward:
         self.now = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')
         return
 
+    def get_html_template(self):
+        """
+        Returns an HTML string for the award, to be put in email
+        """
+        
+        return """
+            <b>{0}</b> - {1}
+        """.format(self.name, self.message)
+
     def serialize(self):
         """
         Returns dict of object properties

@@ -36,7 +36,7 @@ def strava_exchange():
 
     Makes a POST to strava to complete the auth process, this also returns user data
 
-    Add this user data to the db
+    Add this user data to the db TODO redirect user to home page and set cookie
     """
 
     current_app.logger.info(request.args.get('code'))

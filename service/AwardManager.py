@@ -146,7 +146,7 @@ def award_user(user_id, awards):
     award_text_list = "<ul>"
     for award in awards:
         print award
-        award_item = "<li><b>" + award.name + "</b> - " + award.message + "</li>"
+        award_item = "<li>" + award.get_html_template() + "</li>"
         award_text_list += award_item
 
     award_text_list += "</ul>"
