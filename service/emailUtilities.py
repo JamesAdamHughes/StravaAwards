@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 
 TESTING = 0
 
-emailTemplate = """From: StravaAwards <noreply@jameshughes.info>
+emailTemplate = """
 <h1>You Won a Strava Award!</h1>
 
 {1}

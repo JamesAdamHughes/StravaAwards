@@ -107,10 +107,11 @@ def award_list(user_id):
         only_new = False
     
     new_awards = AwardManager.get_new_awards_for_user(user_id, date, only_new)
+    email_sent = False
 
     # Send the user an email of the awards they have recieved
     if len(new_awards) > 0:
-        AwardManager.award_user(1, new_awards)
+        email_sent = AwardManager.award_user(user_id, new_awards)
 
     for award in new_awards:
         res["awards"].append(award.serialize())
@@ -118,6 +119,7 @@ def award_list(user_id):
     res["number_awards"] = len(res["awards"])
     res["only_new"] = only_new
     res["now_date"] = date
+    res["email_sent"] = email_sent
 
     return jsonify(res)
 

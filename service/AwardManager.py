@@ -1,7 +1,7 @@
 import arrow
 from StravaAwards.model.DistanceAward import DistanceAward
 from StravaAwards.model.ConsistancyAward import ConsistancyAward
-from StravaAwards.service import emailUtilities, DatabaseManager, emailUtilities
+from StravaAwards.service import emailUtilities, DatabaseManager, UserManager 
 
 def check_award_occured(award, user_id, onlyNew):
     """
@@ -132,11 +132,16 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
 
 
 def award_user(user_id, awards):
-    ''' Given a user id and a list of awards, 
-    send an email to the user containing all awards they recieved
-    '''
+    """
+    Given a user id and a list of awards, 
+    Send an email to the user containing all awards they recieved
+    """
 
-    subject = "You won {0} Strava awards!".format(len(awards))
+    user = UserManager.get_user(user_id)
+    if not user:
+        return False
+
+    subject = "Congrats {0}, You won {1} Strava awards!".format(user.f_name, len(awards))
 
     award_text_list = "<ul>"
     for award in awards:
@@ -146,6 +151,6 @@ def award_user(user_id, awards):
 
     award_text_list += "</ul>"
 
-    emailUtilities.send_email(subject, award_text_list)
+    sent = emailUtilities.send_email(subject, award_text_list)
 
-    return
+    return sent
