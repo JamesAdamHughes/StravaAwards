@@ -47,8 +47,6 @@ def get_award_from_db(award, user_id):
     params = [award.getStartDate(), award.getEndDate(), award.getAwardType(), user_id, award.name]
     result = DatabaseManager.fetch_one(sql, params)
 
-    log("fetched award: " + str(result))
-
     return result
 
 

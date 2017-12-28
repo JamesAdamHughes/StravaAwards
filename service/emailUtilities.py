@@ -2,6 +2,7 @@ import os, sys, smtplib
 from StravaAwards.service import ConfigService 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from flask import current_app
 
 TESTING = 0
 
@@ -19,7 +20,7 @@ Your StravaAwards Team
 def send_email(subject='', body='body', receivers=['jahughes112@gmail.com'], sender='noreply@jameshughes.info', test=TESTING):
     """ Send an email """
 
-    print "[emailU] sending email..."
+    log("sending email...")
 
     message = MIMEMultipart('alternative')
     message['subject'] = subject
@@ -35,10 +36,10 @@ def send_email(subject='', body='body', receivers=['jahughes112@gmail.com'], sen
         smtpserver = get_email_server()        
         smtpserver.sendmail(sender, receivers, message.as_string())
         smtpserver.quit()
-        print "[emailU] Successfully sent email"
+        log("Successfully sent email")
         return True
     except ValueError:
-        print "[emailU] Error: unable to send email " + str(sys.exc_info())
+        log("[emailU] Error: unable to send email " + str(sys.exc_info()))
         return False
 
 
@@ -63,3 +64,5 @@ def get_email_server():
     else:
         return smtplib.SMTP("localhost", 25)
     
+def log(text):
+    current_app.logger.info("[emailUtils] " + str(text))
