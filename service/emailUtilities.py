@@ -50,6 +50,7 @@ def get_email_server():
     """
 
     enviroment = os.getenv('ENVIROMENT')
+    log("Getting email client for " + enviroment)
 
     if enviroment == 'development':
         server = smtplib.SMTP("smtp.gmail.com", 587)
