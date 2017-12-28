@@ -3,7 +3,7 @@
 --drop table tb_user;
 
 CREATE TABLE tb_activity (
-	pk_activity_id integer PRIAMRY KEY,
+	pk_activity_id integer PRIMARY KEY,
 	fk_strava_activity_id integer not null unique,
 	fk_strava_user_id integer not null,
 	start_date datetimeoffset NOT NULL,
@@ -14,9 +14,11 @@ CREATE TABLE tb_activity (
 );
 
 CREATE TABLE tb_award (
-	pk_award_id integer PRIAMRY KEY,
+	pk_award_id integer PRIMARY KEY,
 	fk_user_id integer not null,
 	name text not null,
+	award_class integer not null,
+	awarded_date datetimeoffset not null,
 	datetime_start datetimeoffset NOT NULL,
 	datetime_end datetimeoffset NOT NULL,
 	type_id integer not null,
@@ -35,3 +37,9 @@ CREATE TABLE tb_user (
 	datetime_created datetimeoffset NOT NULL
 );
    	
+CREATE TABLE tb_award_type (
+	pk_award_type_id integer PRIMARY key,
+	award_name text not null UNIQUE,
+	award_text text not null,
+	exercise_type_id integer not null
+);

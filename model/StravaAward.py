@@ -3,13 +3,15 @@ from datetime import datetime, timedelta
 
 class StravaAward:
 
-    def __init__(self, name, eD, eW, eM, message, eT):
+    def __init__(self, name, eD, eW, eM, message, eT, awarded_date = arrow.now(), award_class=0):
         self.epochDays          = eD
         self.epochWeeks         = eW
         self.epochMonths        = eM
         self.name               = name
         self.message            = message        
         self.exerciseType = eT
+        self.award_class = award_class
+        self.awarded_date = awarded_date
         
         # Setup datetime used as "now", using timezone aware date
         self.now = arrow.utcnow()
@@ -52,6 +54,18 @@ class StravaAward:
         # date = arrow.get(self.getStartDate()) + timedelta(days=6)
         return date.format("YYYY-MM-DD 23:59:59")
 
+    def getAwardedDate(self):
+        return self.awarded_date.format('YYYY-M-D HH:mm:ss')
+
+    def set_awarded_date(self, date):
+        self.awarded_date = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')
+        print self.awarded_date
+
+    def get_award_class(self):
+        return self.award_class
+    
+    def set_award_class(self, class_id):
+        self.award_class = class_id
 
     def getAwardType(self):
         exercise_types = {
@@ -89,7 +103,9 @@ class StravaAward:
             "award_text" : self.getAwardText(),
             "start_date": self.getStartDate(),
             "end_date" : self.getEndDate(),
-            "award_type" : self.getAwardType()
+            "award_type" : self.getAwardType(),
+            "award_class" : self.award_class,
+            "awarded_date" : self.getAwardedDate()
         }
     
     

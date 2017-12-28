@@ -6,7 +6,8 @@ class ConsistancyAward(StravaAward):
     def __init__ (self, name, eD, eW, eM, message, required_activites, required_activites_per_week, eT):
         self.required_activites = required_activites
         self.required_activites_per_week = required_activites_per_week
-        StravaAward.__init__(self, name, eD, eW, eM, message, eT)
+        self.award_class = 2
+        StravaAward.__init__(self, name, eD, eW, eM, message, eT, award_class=self.award_class)
 
 
     def serialize(self):
