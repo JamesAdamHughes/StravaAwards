@@ -1,47 +1,65 @@
-import smtplib
-import ConfigService
-import os
+import os, sys, smtplib
+from StravaAwards.service import ConfigService 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 TESTING = 0
 
 emailTemplate = """From: StravaAwards <noreply@jameshughes.info>
-To: To Person <{2}>
-Subject: You Won a Strava {0} Award!
+<h1>You Won a Strava Award!</h1>
 
 {1}
 
-Way to go you, keep it up!
+Way to go you, keep it up!<br/><br/>
 
-Thanks,
+Thanks,<br/>
 Your StravaAwards Team
 """
 
-def send_email(subject='', body='body', receivers=['jahughes112@gmail.com' ,'test@allaboutspam.com'], sender='noreply@jameshughes.info', test=TESTING):
+def send_email(subject='', body='body', receivers=['jahughes112@gmail.com'], sender='noreply@jameshughes.info', test=TESTING):
     """ Send an email """
-
-    enviroment = os.getenv('ENVIROMENT')
 
     print "[emailU] sending email..."
 
-    email = emailTemplate.format(subject, body, receivers[0])
-    
-    if enviroment == 'development':
-        #don't send email during testing
-        print "[emailU] Email disabled for test"
-        print email            
-        return "[emailU] Email disabled for test"
+    message = MIMEMultipart('alternative')
+    message['subject'] = subject
+    message['To'] = ''.join(receivers)
+    message['From'] = sender
+
+    html_body = MIMEText(emailTemplate.format(subject, body, receivers[0]), 'html')
+
+    message.attach(html_body)
 
     # Try sending the email
     try:
         smtpserver = get_email_server()        
-        smtpserver.sendmail(sender, receivers, email)
+        smtpserver.sendmail(sender, receivers, message.as_string())
+        smtpserver.quit()
         print "[emailU] Successfully sent email"
-    except smtplib.SMTPException:
-        print "[emailU] Error: unable to send email"
+        return True
+    except ValueError:
+        print "[emailU] Error: unable to send email " + str(sys.exc_info())
+        return False
 
 
 def get_email_server():
-    """Connect to Postfix Server"""
-    smtpserver = smtplib.SMTP("localhost", 25)
+    """
+    Connect to Postfix Server and Returns an SMTP server to send emails
+    In dev this connects to my gmail, in prod this connects to a local postfix server
+    """
 
-    return smtpserver
+    enviroment = os.getenv('ENVIROMENT')
+
+    if enviroment == 'development':
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
+        server.starttls()
+
+        gmail_user = ConfigService.getConfigVar("smpt.username")
+        gmail_pwd = ConfigService.getConfigVar("smpt.password")
+
+        server.login(gmail_user, gmail_pwd)
+        return server
+    else:
+        return smtplib.SMTP("localhost", 25)
+    

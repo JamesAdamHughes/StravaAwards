@@ -12,15 +12,14 @@ def check_award_occured(award, user_id, onlyNew):
 
     # check if the required no of acvities exist, 
     # Also check if the same award has already been given
-    if onlyNew:
-        previous_awards = get_award_from_db(award, user_id)
-        print "[awardM] previous_awards" + str(previous_awards)
+    previous_awards = get_award_from_db(award, user_id)
+    print "[awardM] previous_awards" + str(previous_awards)
     
-    if previous_awards:
+    if previous_awards and onlyNew:
         print "[awardM] found old rewards, NOT REWARDING" + str(previous_awards)    
         return False
 
-    if occured and previous_awards == []:
+    if occured and (previous_awards == [] or not onlyNew):
         print "[awardM] awarding user!"
         return True
 
@@ -137,14 +136,16 @@ def award_user(user_id, awards):
     send an email to the user containing all awards they recieved
     '''
 
+    subject = "You won {0} Strava awards!".format(len(awards))
+
     award_text_list = "<ul>"
     for award in awards:
         print award
-        award_item = "<li>" + award.name + ". " + award.message + "</li>"
+        award_item = "<li><b>" + award.name + "</b> - " + award.message + "</li>"
         award_text_list += award_item
 
     award_text_list += "</ul>"
 
-    emailUtilities.send_email('', award_text_list)
+    emailUtilities.send_email(subject, award_text_list)
 
     return

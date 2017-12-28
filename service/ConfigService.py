@@ -3,8 +3,7 @@ import os
 config = ConfigParser.RawConfigParser()
 
 def read(path):
-    print "reading config..." + path
-    print config.read(path)
+    config.read(path)
 
 def getConfigVar(value, section='development'):
     enviroment = os.getenv('ENVIROMENT')

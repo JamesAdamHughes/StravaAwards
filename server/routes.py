@@ -1,17 +1,15 @@
-import os
 import json
 import flask
 import requests
 from flask import jsonify, request, current_app
 from StravaAwards.service import AwardManager, emailUtilities, ActivityManager, SubscriptionManager, UserManager, ConfigService
 import arrow
-import logging
 
 stravaRoute = flask.Blueprint('strava', __name__, template_folder='templates')
 
 @stravaRoute.route('/')
 def hello_world():
-    print 'index'
+    current_app.logger.info( 'index')
     return 'Hello, World! Watch this space for my Strava App web interface!'
 
 @stravaRoute.route('/register', methods=['GET'])
@@ -19,15 +17,11 @@ def register():
     """
     Shows a page allowing the user to register to use the site
 
-    This page starts the authorisation process 
+    This page starts the authorisation process
     """
-    print '/register'
+    current_app.logger.info( '/register')
     # Show auth page to user with link to strava auth url
     # Add app details to auth url
-    current_app.logger.info('Log message')
-
-    current_app.logger.debug('Log message')
-    current_app.logger.warn('Log message')
 
     return flask.render_template('strava/register.html', auth = {
         'client_id' : ConfigService.getConfigVar('strava.client_id'),
@@ -142,7 +136,7 @@ def stravaCallback():
 
     if request.method == 'GET':
         hubChallangeToken = request.args.get('hub.challenge')
-        print '[server] strava subscription verify callback token: ' + hubChallangeToken
+        current_app.logger.info( '[server] strava subscription verify callback token: ' + hubChallangeToken)
 
         res = {
             'hub.challenge': hubChallangeToken
@@ -156,7 +150,7 @@ def stravaCallback():
 
         data_dict = json.loads(request.data)
         user_id = data_dict['owner_id']
-        print "[server] Subscripton: User uploaded activity " + str(data_dict)
+        current_app.logger.info( "[server] Subscripton: User uploaded activity " + str(data_dict))
 
         # Load the users activity data again
         ActivityManager.get_and_save_actvites_from_api(user_id)
@@ -176,20 +170,38 @@ def stravaCallback():
 
 @stravaRoute.route('/authorized', methods=['GET', 'POST'])
 def authorized():
-    print 'authorized'
+    current_app.logger.info('authorized')
     code = request.values.get('code')
 
-    print "code: " , code
+    current_app.logger.info("code: " + code)
 
 @stravaRoute.route('/strava/subscribe/<user_id>', methods=['GET'])
 def subscribe_user(user_id):    
-    print '/strava/subscribe'
-    print '[server] subscribing to user events'
+    current_app.logger.info('/strava/subscribe')
+    current_app.logger.info('[server] subscribing to user events')
     SubscriptionManager.subscribe(user_id)
-    print '[server] done subscription'
+    current_app.logger.info('[server] done subscription')
 
     return jsonify({
         "ok": True,
         "subscribe_user": user_id
     })
     
+
+@stravaRoute.route('/mail', methods=['GET'])
+def mail():
+    current_app.logger.info('[routes] sending mail endpoint')
+
+    text = """<br/>
+    this is a body. <br/> There was a break. 
+    <ul>
+    <li>this is a list</li>
+    <li>And you also get this won <b>woooo</b></li>
+    </ul>
+    """
+
+    success = emailUtilities.send_email(subject="Testing mail endpoint", body=text)
+
+    return jsonify({
+        "ok": success
+    })
