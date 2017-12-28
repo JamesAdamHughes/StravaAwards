@@ -54,8 +54,8 @@ class StravaAward:
         # date = arrow.get(self.getStartDate()) + timedelta(days=6)
         return date.format("YYYY-MM-DD 23:59:59")
 
-    def getAwardedDate(self):
-        return self.awarded_date.format('YYYY-M-D HH:mm:ss')
+    def get_awarded_date(self):
+        return self.awarded_date
 
     def set_awarded_date(self, date):
         self.awarded_date = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')
@@ -105,7 +105,8 @@ class StravaAward:
             "end_date" : self.getEndDate(),
             "award_type" : self.getAwardType(),
             "award_class" : self.award_class,
-            "awarded_date" : self.getAwardedDate()
+            "awarded_date" : self.get_awarded_date().format(),
+            "human_award_date" : self.get_awarded_date().humanize()
         }
     
     
