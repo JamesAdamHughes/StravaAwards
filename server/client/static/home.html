@@ -19,7 +19,8 @@
                             <md-card>
                                     <md-card-header>
                                         <md-avatar>
-                                                <md-icon>directions_walk</md-icon>
+                                                <i v-if="award.award_class == 1" class="fas fa-flag-checkered"></i>
+                                                <i v-else class="fas fa-bullseye"></i>
                                         </md-avatar>
                                 
                                         <div class="md-title">{{award.name}}</div>
@@ -28,12 +29,8 @@
                             
                                     <md-card-content>
                                         {{award.award_text}}
-                                    </md-card-content>
-                            
-                                    <md-card-actions>
-                                        <md-button>Action</md-button>
-                                        <md-button>Action</md-button>
-                                    </md-card-actions>
+                                    </md-card-content>                           
+                                    
                                 </md-card>
                         </div>
                 </div>
@@ -45,6 +42,7 @@
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vue-material@beta"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
     <script src="/static/app.js"></script>
 
     <style>
@@ -56,6 +54,7 @@
 
     .md-card {
         margin: 20px 0px;
+        min-height: 165px;
     }    
     </style>
   </body>
