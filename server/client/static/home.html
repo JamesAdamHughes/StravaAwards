@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
+  </head>
+
+  <body>
+
+    <div id="app">
+        <div id="card-container">
+                <span class="md-display-1">{{ message }} - Your Results from This Week</span>
+
+                <div class="md-layout md-gutter md-alignment-center">
+                        <div v-for="award in awards" class="md-layout-item md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                            <md-card>
+                                    <md-card-header>
+                                        <md-avatar>
+                                                <md-icon>directions_walk</md-icon>
+                                        </md-avatar>
+                                
+                                        <div class="md-title">{{award.name}}</div>
+                                        <div class="md-subhead">{{award.human_award_date}}</div>
+                                    </md-card-header>
+                            
+                                    <md-card-content>
+                                        {{award.award_text}}
+                                    </md-card-content>
+                            
+                                    <md-card-actions>
+                                        <md-button>Action</md-button>
+                                        <md-button>Action</md-button>
+                                    </md-card-actions>
+                                </md-card>
+                        </div>
+                </div>
+            
+        </div>
+    </div>
+
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-material@beta"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+    <script src="/static/app.js"></script>
+
+    <style>
+    #card-container {
+        width: 80vw;
+        margin: 0 auto;
+        padding-top: 30px; 
+    }
+
+    .md-card {
+        margin: 20px 0px;
+    }    
+    </style>
+  </body>
+</html>

@@ -21,6 +21,8 @@ gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.INFO)
 
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+
 # Blueprints
 app.register_blueprint(pageRoutes)
 app.register_blueprint(apiRoutes, url_prefix="/api")

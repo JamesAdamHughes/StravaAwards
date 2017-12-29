@@ -12,12 +12,12 @@ def insert_db(sql, params):
     c, conn = get_db_ccursor()
 
     if params:
-        c.execute(sql, params)
+        result = c.execute(sql, params)
     else:
-        c.execute(sql)
+        result = c.execute(sql)
 
     close_connection(conn)
-    return
+    return result
 
 def close_connection(conn):
     conn.commit()

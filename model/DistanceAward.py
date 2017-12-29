@@ -7,7 +7,8 @@ class DistanceAward(StravaAward):
 
     def __init__ (self, name, eD, eW, eM, message, required_distance, eT):
         self.required_distance = required_distance
-        StravaAward.__init__(self, name, eD, eW, eM, message, eT)
+        self.award_class = 1
+        StravaAward.__init__(self, name, eD, eW, eM, message, eT, award_class=self.award_class)
 
     def serialize(self):
         """

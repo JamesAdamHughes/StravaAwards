@@ -2,12 +2,18 @@ import flask
 from flask import jsonify, request, current_app
 from StravaAwards.service import ConfigService
 
-pageRoutes = flask.Blueprint('pages', __name__, template_folder='../templates')
+pageRoutes = flask.Blueprint('pages', __name__, template_folder='../templates', static_folder='../client/static')
+
 
 @pageRoutes.route('/')
 def index():
     current_app.logger.info( 'index')
     return 'Hello, World! Watch this space for my Strava App web interface!'
+
+@pageRoutes.route('/home')
+def home():
+    current_app.logger.info( 'index')
+    return pageRoutes.send_static_file('home.html')
 
 @pageRoutes.route('/register', methods=['GET'])
 def register():

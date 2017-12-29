@@ -4,30 +4,7 @@ from StravaAwards.model.DistanceAward import DistanceAward
 from StravaAwards.model.ConsistancyAward import ConsistancyAward
 from StravaAwards.service import emailUtilities, DatabaseManager, UserManager 
 
-def check_award_occured(award, user_id, onlyNew):
-    """
-    Runs the award logic for an award, to test if it has occured
-    Currently only works with SQL statements and consistancy awards
-    """
-    occured = award.check_occured(user_id)
-
-    # check if the required no of acvities exist, 
-    # Also check if the same award has already been given
-    previous_awards = get_award_from_db(award, user_id)
-    log("previous_awards" + str(previous_awards))
-    
-    if previous_awards and onlyNew:
-        log("found old rewards, NOT REWARDING" + str(previous_awards)) 
-        return False
-
-    if occured and (previous_awards == [] or not onlyNew):
-        log("awarding user!")
-        return True
-
-    return False
-
-
-def get_award_from_db(award, user_id):
+def load_award(award, user_id):
     """
     Returns an award from the database, using the start end and type as a unique identifier
     """
@@ -49,25 +26,20 @@ def get_award_from_db(award, user_id):
 
     return result
 
-
 def save_award(award, user_id):
-    """
-    Takes an award and saves to to the db
-    """
-    log("saving award: " + str(award.name))
-    return add_award_to_db(user_id, award)
-
-
-def add_award_to_db(user_id, award):
     """
     Inserts an award into tb_award
     """
+
+    log("saving award: " + str(award.name))
 
     sql = """
         insert into tb_award (
             fk_user_id,
             name,
             datetime_start,
+            award_class,
+            awarded_date,
             datetime_end,
             type_id,
             datetime_created
@@ -77,14 +49,43 @@ def add_award_to_db(user_id, award):
             ?,
             ?,
             ?,
+            ?,
+            ?,
             ?
         );
     """
 
-    params = [user_id, award.name, award.getStartDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()]
+    params = [user_id, award.name, award.getStartDate(), award.award_class, award.getAwardedDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()]
     DatabaseManager.insert_db(sql, params)
 
     return
+
+def save_award_type(award_type):
+    """
+    Inserts an award type into tb_award_type
+    Returns the rowid of the inserted award
+
+    As we only insert award types at runtime, we need to store the type id for later use
+    """
+
+    log("saving award type: " + str(award_type))
+
+    sql = """
+        insert or ignore into tb_award_type (
+            award_name,
+            award_text,
+            exercise_type_id           
+        ) values (
+            ?,
+            ?,
+            ?
+        );
+    """
+
+    params = [award_type.name, award_type.message, award_type.exerciseType]
+    result = DatabaseManager.insert_db(sql, params)
+
+    return result.lastrowid
 
 
 def create_awards():
@@ -104,6 +105,9 @@ def create_awards():
     awards.append(DistanceAward('Around the Block', 0, 1, 0, 'You ran 10k this week!',10000 ,0))
     awards.append(DistanceAward('Almost a Half!', 0, 1, 0, 'You ran 15k this week!',20000 ,0))
 
+    for award_type in awards:
+        save_award_type(award_type)
+        
     return awards
 
 def get_new_awards_for_user(user_id, now_date, onlyNew=True):
@@ -120,12 +124,29 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
         log("Checking " + award.name + " date range is: " + award.getStartDate() + " to " + award.getEndDate())
 
         # Check if the award happened
-        occured = check_award_occured(award, user_id, onlyNew)
-        if occured:
-            # save award to db
-            valid_awards.append(award)
-            save_award(award, user_id)
+        occured = award.check_occured(user_id)
+
+        #check if we have already given the award out (already met conditions once)
+        previous_awards = load_award(award, user_id)
+        log("previous_awards" + str(previous_awards))
+        
+        if previous_awards and onlyNew:
+            # already given award and are only looking for new ones
+            log("found old rewards, NOT REWARDING" + str(previous_awards)) 
+
+        elif occured and (previous_awards == [] or not onlyNew):
+            # award conditions met and we haven't given before or forcing new
             log("awarding: " + award.getAwardText())
+            
+            if previous_awards:
+                award.set_awarded_date(previous_awards[0]['datetime_created'])
+            else:
+                # save award to db
+                award.set_awarded_date(now_date)
+                save_award(award, user_id)
+
+            valid_awards.append(award)
+
     return valid_awards
 
 
