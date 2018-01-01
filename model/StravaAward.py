@@ -55,7 +55,7 @@ class StravaAward:
         return date.format("YYYY-MM-DD 23:59:59")
 
     def get_awarded_date(self):
-        return self.awarded_date
+        return self.awarded_date.format('YYYY-M-D HH:mm:ss')
 
     def set_awarded_date(self, date):
         self.awarded_date = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')
@@ -82,7 +82,8 @@ class StravaAward:
         Manually set the time of "now"
         Used for testing different dates. Default is UTC
         """
-        self.now = arrow.get(date, 'YYYY-M-D HH:mm:ss').replace(tzinfo='local')
+        print "date" + str(date)
+        self.now = arrow.get(date, 'YYYY-MM-DD HH:mm:ss').replace(tzinfo='local')
         return
 
     def get_html_template(self):
@@ -105,8 +106,8 @@ class StravaAward:
             "end_date" : self.getEndDate(),
             "award_type" : self.getAwardType(),
             "award_class" : self.award_class,
-            "awarded_date" : self.get_awarded_date().format(),
-            "human_award_date" : self.get_awarded_date().humanize()
+            "awarded_date" : self.get_awarded_date(),
+            "human_award_date" : arrow.get(self.get_awarded_date(), 'YYYY-M-D HH:mm:ss').humanize()
         }
     
     

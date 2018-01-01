@@ -55,7 +55,7 @@ def save_award(award, user_id):
         );
     """
 
-    params = [user_id, award.name, award.getStartDate(), award.award_class, award.getAwardedDate(), award.getEndDate(), award.getAwardType(), arrow.now().format()]
+    params = [user_id, award.name, award.getStartDate(), award.award_class, award.get_awarded_date(), award.getEndDate(), award.getAwardType(), arrow.now().format()]
     DatabaseManager.insert_db(sql, params)
 
     return
@@ -110,12 +110,14 @@ def create_awards():
         
     return awards
 
-def get_new_awards_for_user(user_id, now_date, onlyNew=True):
-    ''' Takes an award type, applies it to the activites data
-    Returns true if the award occured
+def check_awards_for_user(user_id, now_date, onlyNew=True):
+    """
+    Given a user and date, checks all awards to see if user qualifies for them
+    
+    Saves these awards to the database
 
     :param user_id: int ID of user to be rewarded
-    '''
+    """
     valid_awards = []
     for award in create_awards():
         # Force set date for testing
@@ -138,8 +140,8 @@ def get_new_awards_for_user(user_id, now_date, onlyNew=True):
             # award conditions met and we haven't given before or forcing new
             log("awarding: " + award.getAwardText())
             
-            if previous_awards:
-                award.set_awarded_date(previous_awards[0]['datetime_created'])
+            if previous_awards:                
+                award.set_awarded_date(previous_awards[0]['awarded_date'])
             else:
                 # save award to db
                 award.set_awarded_date(now_date)

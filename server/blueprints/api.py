@@ -27,20 +27,29 @@ def activity_load(user_id, from_date="2016-01-01"):
 def award_list(user_id):
     """
     Returns a JSON of all awards a user has won on a given date
-    Also send an email to the user for each award they have won
+
+    Params:
+        email - send an email to the user for each award they have won
+        onlyNew - return awards that have not yet been awarded, or return all (even if awarded already
+        dateStart - start of time period to check
+        dateend - end of time period to check
     """
     res = {
         "ok": True,
         "awards" : []
     }
 
-    date = request.args.get('date')
+    dateStart = request.args.get('dateStart')
     only_new = request.args.get('onlyNew')
     email = request.args.get('email')
 
     # Check extra params to modify the behaviour of call
-    if date is None:
-        date = arrow.now().format("YYYY-MM-DD HH:mm:ss")
+    if dateStart is None:
+        dateStart = arrow.now().format("YYYY-MM-DD HH:mm:ss")
+    else:
+        pass
+    
+    dateStart = arrow.get('2017-12-10', 'YYYY-MM-DD').format("YYYY-MM-DD 00:00:00")
 
     if email is None or email in trueisms:
         email = True
@@ -52,7 +61,7 @@ def award_list(user_id):
     elif only_new in falseism:
         only_new = False
     
-    new_awards = AwardManager.get_new_awards_for_user(user_id, date, only_new)
+    new_awards = AwardManager.check_awards_for_user(user_id, dateStart, only_new)
     email_sent = False
 
     # Send the user an email of the awards they have recieved
@@ -64,7 +73,7 @@ def award_list(user_id):
 
     res["number_awards"] = len(res["awards"])
     res["only_new"] = only_new
-    res["now_date"] = date
+    res["now_date"] = dateStart
     res["email_sent"] = email_sent
 
     return jsonify(res)
@@ -142,11 +151,11 @@ def stravaCallback():
         # Load the users activity data again
         ActivityManager.get_and_save_actvites_from_api(user_id)
 
-        new_awards = AwardManager.get_new_awards_for_user(
+        new_awards = AwardManager.check_awards_for_user(
             user_id, 
             arrow.now().replace(hours=-1).format("YYYY-MM-DD HH:mm:ss"))
         
-        AwardManager.award_user(1, new_awards)
+        AwardManager.award_user(user_id, new_awards)
         
         for award in new_awards:            
             res["awards"].append(award.serialize())
@@ -154,13 +163,6 @@ def stravaCallback():
         res["numberAwards"] = len(res["awards"])
         
     return jsonify(res)
-
-@apiRoutes.route('/authorized', methods=['GET', 'POST'])
-def authorized():
-    current_app.logger.info('authorized')
-    code = request.values.get('code')
-
-    current_app.logger.info("code: " + code)
 
 @apiRoutes.route('/strava/subscribe/<user_id>', methods=['GET'])
 def subscribe_user(user_id):    

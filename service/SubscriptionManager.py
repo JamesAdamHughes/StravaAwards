@@ -5,10 +5,10 @@ import json
 from flask import current_app
 
 def subscribe(user_token):
-    print '[subscribeM] doing subscription...'
+    current_app.logger.info('[subscribeM] doing subscription...')
 
     client = Client()
-    callback_url = getPublicUrl() + '/strava/callback'
+    callback_url = getPublicUrl() + '/api/strava/callback'
     current_app.logger.info('current app:' + callback_url)
     current_app.logger.info('user token:' + user_token)
     
@@ -22,7 +22,6 @@ def subscribe(user_token):
  
 def getPublicUrl():
     enviroment = os.getenv('ENVIROMENT')
-    print enviroment
     if enviroment == 'development':
         a = os.popen("curl  http://localhost:4040/api/tunnels > tunnels.json").read()  
 
