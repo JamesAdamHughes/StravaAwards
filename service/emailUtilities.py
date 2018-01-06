@@ -17,7 +17,7 @@ Thanks,<br/>
 Your StravaAwards Team
 """
 
-def send_email(subject='', body='body', receivers=['jahughes112@gmail.com'], sender='noreply@jameshughes.info', test=TESTING):
+def send_email(subject='', body='body', receivers=['jahughes112@gmail.com'], sender='stravaawards@jameshughes.info', test=TESTING):
     """ Send an email """
 
     log("sending email...")

@@ -49,7 +49,7 @@ def award_list(user_id):
     else:
         pass
     
-    dateStart = arrow.get('2017-12-10', 'YYYY-MM-DD').format("YYYY-MM-DD 00:00:00")
+    #dateStart = arrow.get('2017-12-10', 'YYYY-MM-DD').format("YYYY-MM-DD 00:00:00")
 
     if email is None or email in trueisms:
         email = True
